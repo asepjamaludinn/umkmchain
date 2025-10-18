@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const ChainIcon = () => (
+const BuildingIcon = () => (
   <svg
     className="w-6 h-6"
     fill="none"
@@ -17,7 +17,23 @@ const ChainIcon = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+      d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
+    />
+  </svg>
+);
+
+const GovernmentIcon = () => (
+  <svg
+    className="w-6 h-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 3v1m6.364 1.636l-.707.707M21 12h-1m1.364 6.364l-.707-.707M12 21v-1m-6.364-1.636l.707-.707M3 12h1M3.636 5.636l.707.707"
     />
   </svg>
 );
@@ -68,39 +84,7 @@ const RoleCard = ({
   </button>
 );
 
-const BuildingIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
-    />
-  </svg>
-);
-
-const GovernmentIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 3v1m6.364 1.636l-.707.707M21 12h-1m1.364 6.364l-.707-.707M12 21v-1m-6.364-1.636l.707-.707M3 12h1M3.636 5.636l.707.707"
-    />
-  </svg>
-);
-
-export default function LoginPage() {
+export default function SignUpPage() {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<"umkm" | "regulator" | null>(
     null
@@ -108,7 +92,7 @@ export default function LoginPage() {
 
   const handleContinue = () => {
     if (selectedRole) {
-      router.push(`/login/${selectedRole}`);
+      router.push(`/signup/${selectedRole}`);
     }
   };
 
@@ -138,10 +122,10 @@ export default function LoginPage() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900">
-              Masuk ke Akun Anda
+              Buat Akun Baru
             </h1>
             <p className="mt-2 text-base text-gray-600">
-              Pilih tipe akun untuk melanjutkan
+              Pilih tipe akun untuk memulai
             </p>
           </div>
 
@@ -151,7 +135,7 @@ export default function LoginPage() {
               title="Sebagai UMKM"
               description="Daftarkan aset dan dokumen bisnis Anda"
               icon={<BuildingIcon />}
-              href="/login/umkm"
+              href="/signup/umkm"
               isSelected={selectedRole === "umkm"}
               onClick={() => setSelectedRole("umkm")}
             />
@@ -160,7 +144,7 @@ export default function LoginPage() {
               title="Sebagai Regulator"
               description="Pantau dan verifikasi aset UMKM"
               icon={<GovernmentIcon />}
-              href="/login/regulator"
+              href="/signup/regulator"
               isSelected={selectedRole === "regulator"}
               onClick={() => setSelectedRole("regulator")}
             />
@@ -181,12 +165,12 @@ export default function LoginPage() {
             </button>
 
             <div className="text-center text-sm text-gray-600">
-              Belum punya akun?{" "}
+              Sudah punya akun?{" "}
               <Link
-                href="/signup"
+                href="/login"
                 className="text-blue-600 font-semibold hover:underline"
               >
-                Daftar di sini
+                Masuk di sini
               </Link>
             </div>
 
