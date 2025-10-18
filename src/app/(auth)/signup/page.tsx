@@ -179,7 +179,7 @@ export default function SignUpPage() {
                 href="/verify"
                 className="text-blue-600 hover:underline font-medium"
               >
-                Cek Verifikasi ID User
+                Cek Verifikasi ID
               </Link>
             </div>
           </div>

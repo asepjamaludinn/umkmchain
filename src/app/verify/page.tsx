@@ -201,35 +201,7 @@ export default function VerificationSearchPage() {
           {/* Search Form */}
           <form onSubmit={handleSearch} className="space-y-4">
             {/* Type Selection */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">
-                Tipe Pencarian
-              </label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="umkm"
-                    checked={searchType === "umkm"}
-                    onChange={(e) => setSearchType(e.target.value as "umkm")}
-                    className="w-4 h-4 text-blue-600"
-                  />
-                  <span className="text-gray-700 text-sm">UMKM (NIB)</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    value="regulator"
-                    checked={searchType === "regulator"}
-                    onChange={(e) =>
-                      setSearchType(e.target.value as "regulator")
-                    }
-                    className="w-4 h-4 text-blue-600"
-                  />
-                  <span className="text-gray-700 text-sm">Regulator</span>
-                </label>
-              </div>
-            </div>
+            <div></div>
 
             {/* Search Input */}
             <div>

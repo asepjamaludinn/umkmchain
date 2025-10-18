@@ -174,7 +174,7 @@ export default function UMKMLoginPage() {
                 <span className="text-gray-600">Ingat saya</span>
               </label>
               <Link
-                href="#"
+                href="/forgot-password"
                 className="text-blue-600 hover:text-blue-700 font-semibold"
               >
                 Lupa password?
