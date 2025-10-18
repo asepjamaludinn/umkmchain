@@ -10,9 +10,8 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
-  generator: "v0.app",
+  title: "umkm",
+  description: "umkm",
 };
 
 export default function RootLayout({
