@@ -89,9 +89,6 @@ export default function WelcomingPage() {
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/10 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
       {/* Main Content */}
-      {/* Perubahan di sini: py-16 diubah menjadi pt-32 pb-16 
-        untuk memberi ruang lebih di atas 
-      */}
       <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-32 pb-16 relative z-10">
         {/* Header Section */}
         <div className="text-center mb-16 space-y-4">

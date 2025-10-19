@@ -5,8 +5,13 @@ import { useState } from "react";
 import Link from "next/link";
 import BackButton from "@/components/back-button";
 import ChainIcon from "@/components/icons/chain-icon";
-import { Eye, EyeOff } from "lucide-react";
-import { CheckCircleIcon } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  FileText,
+  LayoutDashboard,
+  ShieldCheck,
+} from "lucide-react";
 
 export default function RegulatorLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -56,20 +61,23 @@ export default function RegulatorLoginPage() {
                 {
                   title: "Verifikasi Data UMKM",
                   desc: "Proses verifikasi yang transparan dan terstruktur",
+                  icon: FileText,
                 },
                 {
                   title: "Dashboard Lengkap",
                   desc: "Kelola semua permohonan verifikasi dengan mudah",
+                  icon: LayoutDashboard,
                 },
                 {
                   title: "Keamanan Tingkat Enterprise",
                   desc: "Perlindungan data dengan enkripsi blockchain",
+                  icon: ShieldCheck,
                 },
               ].map((item, idx) => (
                 <div key={idx} className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center text-accent">
-                    <CheckCircleIcon className="w-5 h-5" />{" "}
-                    {/* Use CheckCircleIcon */}
+                    {/* Render ikon dari properti item.icon */}
+                    <item.icon className="w-5 h-5" />{" "}
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">

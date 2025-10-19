@@ -75,9 +75,6 @@ export default function Navbar({
         </Link>
       </div>
 
-      {/* Desktop Menu - Dihilangkan */}
-      {/* <ul className="hidden lg:flex items-center gap-8">...</ul> */}
-
       {/* Right Section - Auth Buttons and Menu */}
       <div className="flex items-center gap-4">
         {/* Desktop Auth Buttons */}
@@ -130,11 +127,6 @@ export default function Navbar({
             transition={{ duration: 0.2 }}
             className="absolute top-full right-0 mt-3 w-56 bg-white/95 dark:bg-black/95 shadow-xl rounded-2xl flex flex-col border border-border backdrop-blur-lg"
           >
-            {/* Mobile Nav Links - Dihilangkan */}
-            {/* <div className="flex flex-col p-4 space-y-2">...</div> */}
-            {/* Divider - Dihilangkan */}
-            {/* <div className="h-px bg-border" /> */}
-
             {/* Mobile Auth Buttons */}
             {showAuthButtons && (
               <div className="flex flex-col gap-2 p-4">

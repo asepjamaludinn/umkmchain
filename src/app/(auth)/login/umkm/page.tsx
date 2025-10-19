@@ -5,8 +5,13 @@ import { useState } from "react";
 import Link from "next/link";
 import BackButton from "@/components/back-button";
 import ChainIcon from "@/components/icons/chain-icon";
-import { Eye, EyeOff } from "lucide-react";
-import { CheckCircleIcon } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  LayoutDashboard,
+  FileCheck,
+  ShieldCheck,
+} from "lucide-react";
 
 export default function UMKMLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,8 +28,8 @@ export default function UMKMLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-background">
-      {/* Decorative elements */}
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-background relative overflow-hidden">
+      {/* Decorative Background */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-secondary/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
@@ -55,47 +60,35 @@ export default function UMKMLoginPage() {
 
             {/* Features List */}
             <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center text-primary">
-                  <CheckCircleIcon />
+              {[
+                {
+                  title: "Akses Dashboard Lengkap",
+                  desc: "Pantau status verifikasi dan kelola data bisnis Anda",
+                  icon: LayoutDashboard,
+                },
+                {
+                  title: "Sertifikat Digital",
+                  desc: "Dapatkan sertifikat blockchain yang tidak dapat diubah",
+                  icon: FileCheck,
+                },
+                {
+                  title: "Keamanan Terjamin",
+                  desc: "Teknologi blockchain terdepan untuk melindungi data Anda",
+                  icon: ShieldCheck,
+                },
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center text-primary">
+                    <item.icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">{item.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">
-                    Akses Dashboard Lengkap
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    Pantau status verifikasi dan kelola data bisnis Anda
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center text-primary">
-                  <CheckCircleIcon />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">
-                    Sertifikat Digital
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    Dapatkan sertifikat blockchain yang tidak dapat diubah
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center text-primary">
-                  <CheckCircleIcon />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">
-                    Keamanan Terjamin
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    Teknologi blockchain terdepan untuk melindungi data Anda
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
