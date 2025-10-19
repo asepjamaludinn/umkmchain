@@ -1,9 +1,10 @@
 "use client";
 
 import type React from "react";
-
-import Link from "next/link";
 import { useState } from "react";
+import Link from "next/link";
+import BackButton from "@/components/back-button";
+import ChainIcon from "@/components/icons/chain-icon";
 
 const EyeIcon = () => (
   <svg
@@ -38,175 +39,202 @@ const EyeOffIcon = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
-      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-4.803m5.596-3.856a3.375 3.375 0 11-4.753 4.753m7.371-1.368A9.01 9.01 0 0123 12c-1.274-4.057-5.065-7-9.542-7-4.477 0-8.268 2.943-9.542 7M3 3l18 18"
+      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-4.803m5.596-3.856a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0z"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M17.921 17.921l3.536 3.536M3.543 3.543l3.536 3.536"
     />
   </svg>
 );
 
+const CheckCircleIcon = () => (
+  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+  </svg>
+);
+
 export default function RegulatorLoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulasi login
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log("Login Regulator:", { email, password });
-    }, 1000);
+    setTimeout(() => setIsLoading(false), 1500);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 sm:p-8 bg-gray-50 font-sans">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col p-8 sm:p-10 border border-gray-100">
-        {/* Background Gradient */}
-        <div
-          className="absolute inset-0 opacity-40 mix-blend-multiply pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(0, 128, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%, rgba(128, 0, 255, 0.1) 100%)",
-          }}
-        >
-          <div className="absolute bottom-0 -right-1/4 w-3/4 h-3/4 rounded-full bg-blue-500 opacity-5 blur-3xl transform translate-y-1/2"></div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background relative overflow-hidden">
+      {/* Decorative Background */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col gap-8">
-          {/* Header */}
-          <div>
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 mb-4 text-sm font-semibold"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Kembali
-            </Link>
+      {/* Header */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 relative z-10">
+        <BackButton />
+      </div>
 
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">⛓</span>
+      {/* Main Section */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-200px)]">
+          {/* Left Content */}
+          <div className="space-y-8 hidden lg:block">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-primary-foreground shadow-lg">
+                  <ChainIcon className="w-8 h-8" />
+                </div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  UMKMChain
+                </h1>
               </div>
-              <span className="text-lg font-bold text-gray-900">UMKMChain</span>
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                Masuk ke dashboard Regulator dan verifikasi UMKM dengan sistem
+                blockchain terpercaya.
+              </p>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900">
-              Masuk Sebagai Regulator
-            </h1>
-            <p className="mt-2 text-base text-gray-600">
-              Akses dashboard untuk memantau aset UMKM
-            </p>
+            <div className="space-y-4">
+              {[
+                {
+                  title: "Verifikasi Data UMKM",
+                  desc: "Proses verifikasi yang transparan dan terstruktur",
+                },
+                {
+                  title: "Dashboard Lengkap",
+                  desc: "Kelola semua permohonan verifikasi dengan mudah",
+                },
+                {
+                  title: "Keamanan Tingkat Enterprise",
+                  desc: "Perlindungan data dengan enkripsi blockchain",
+                },
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center text-accent">
+                    <CheckCircleIcon />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email Input */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-semibold text-gray-900 mb-2"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="nama@regulator.gov.id"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition"
-                required
-              />
-            </div>
+          {/* Right Form */}
+          <div className="flex items-center justify-center">
+            <div className="w-full max-w-md bg-card rounded-3xl border-2 border-border shadow-xl p-8 space-y-8">
+              <div className="text-center space-y-2">
+                <h2 className="text-3xl font-bold text-foreground">
+                  Masuk Regulator
+                </h2>
+                <p className="text-muted-foreground">
+                  Kelola verifikasi UMKM dengan sistem blockchain
+                </p>
+              </div>
 
-            {/* Password Input */}
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold text-gray-900 mb-2"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Masukkan password Anda"
-                  className="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 outline-none transition"
-                  required
-                />
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Email */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-semibold text-foreground"
+                  >
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="nama@instansi.gov.id"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
+                    required
+                  />
+                </div>
+
+                {/* Password */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-semibold text-foreground"
+                  >
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Masukkan password Anda"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Remember & Forgot */}
+                <div className="flex items-center justify-between text-sm">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 rounded border-border text-primary focus:ring-ring"
+                    />
+                    <span className="text-foreground">Ingat saya</span>
+                  </label>
+                  <Link
+                    href="/forgot-password/regulator"
+                    className="text-primary hover:text-accent font-medium"
+                  >
+                    Lupa password?
+                  </Link>
+                </div>
+
+                {/* Submit */}
                 <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1"
-                  aria-label={
-                    showPassword ? "Sembunyikan password" : "Tampilkan password"
-                  }
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-gradient-to-r from-accent to-primary text-primary-foreground font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                 >
-                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                  {isLoading ? "Memproses..." : "Masuk"}
                 </button>
+              </form>
+
+              {/* Footer */}
+              <div className="text-center space-y-4 pt-4 border-t border-border">
+                <p className="text-muted-foreground">
+                  Belum punya akun?{" "}
+                  <Link
+                    href="/signup/regulator"
+                    className="text-primary hover:text-accent font-semibold"
+                  >
+                    Daftar di sini
+                  </Link>
+                </p>
               </div>
             </div>
-
-            {/* Remember & Forgot */}
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-gray-300"
-                />
-                <span className="text-gray-600">Ingat saya</span>
-              </label>
-              <Link
-                href="/forgot-password"
-                className="text-blue-600 hover:text-blue-700 font-semibold"
-              >
-                Lupa password?
-              </Link>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 px-4 rounded-full font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Sedang masuk..." : "Masuk"}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-gray-200"></div>
-            <span className="text-sm text-gray-500">atau</span>
-            <div className="flex-1 h-px bg-gray-200"></div>
-          </div>
-
-          {/* Sign Up Link */}
-          <div className="text-center text-sm text-gray-600">
-            Belum punya akun?{" "}
-            <Link
-              href="/signup"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Daftar di sini
-            </Link>
           </div>
         </div>
       </div>
