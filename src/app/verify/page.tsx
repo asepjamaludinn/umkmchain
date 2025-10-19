@@ -6,6 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ChainIcon from "@/components/icons/chain-icon";
+import BackButton from "@/components/back-button";
 
 const ArrowRightIcon = () => (
   <svg
@@ -146,6 +147,10 @@ export default function VerifyPage() {
       <div className="w-full lg:w-1/2 bg-gradient-to-br from-background via-secondary/10 to-background flex flex-col justify-center p-8 lg:p-16 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl opacity-10"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/10 to-transparent rounded-full blur-3xl opacity-10"></div>
+
+        <div className="absolute top-8 left-8 z-20">
+          <BackButton />
+        </div>
 
         <div className="max-w-md mx-auto w-full space-y-8 relative z-10">
           {/* Logo */}
@@ -294,3 +299,4 @@ export default function VerifyPage() {
     </div>
   );
 }
+  
