@@ -16,7 +16,7 @@ export default function SplashScreen() {
   }, [router]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-brand-dark via-brand-medium to-brand-light">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-brand-dark via-brand-medium to-brand-light relative overflow-hidden">
       {/* Background Animated Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-72 h-72 bg-brand-light rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
@@ -29,10 +29,10 @@ export default function SplashScreen() {
         {/* Logo Container */}
         <div className="flex flex-col items-center gap-6 animate-fade-in">
           {/* Logo Icon */}
-          <div className="relative">
+          <div className="relative group">
             <div className="absolute inset-0 bg-white rounded-2xl blur-2xl opacity-30 animate-pulse"></div>
-            <div className="relative w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300">
-              <ChainIcon className="w-12 h-12 text-brand-dark" />
+            <div className="relative w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-2xl transform transition-all duration-500 ease-out group-hover:rotate-6 group-hover:scale-110">
+              <ChainIcon className="w-12 h-12 text-brand-dark transition-transform duration-500 ease-out group-hover:rotate-12" />
             </div>
           </div>
 
