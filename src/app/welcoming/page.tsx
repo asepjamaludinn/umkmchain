@@ -1,49 +1,38 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import Navbar from "@/components/layout/navbar";
-import ChainIcon from "@/components/icons/chain-icon";
-
-const CheckCircleIcon = () => (
-  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-  </svg>
-);
-
-const ArrowRightIcon = () => (
-  <svg
-    className="w-5 h-5"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M13 7l5 5m0 0l-5 5m5-5H6"
-    />
-  </svg>
-);
+import React, { useState } from "react";
+import NextLink from "next/link";
+import Navbar from "@/components/layout/navbar"; // Pastikan path ini benar
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Link,
+  CheckCircle,
+  ArrowRight,
+  ShieldCheck,
+  FileText,
+  LayoutDashboard,
+  Database,
+} from "lucide-react";
 
 interface Step {
   number: number;
   title: string;
   description: string;
   details: string[];
+  icon: React.ReactNode;
 }
 
 const steps: Step[] = [
   {
     number: 1,
     title: "Verifikasi Identitas",
-    description: "Masukkan ID Hash Anda untuk memulai proses verifikasi",
+    description: "Masukkan ID Hash Anda untuk memulai proses",
     details: [
       "Masukkan ID Hash unik Anda",
       "Sistem akan memvalidasi kredensial bisnis",
       "Proses berlangsung kurang dari 1 menit",
     ],
+    icon: <ShieldCheck className="w-8 h-8" />,
   },
   {
     number: 2,
@@ -54,6 +43,7 @@ const steps: Step[] = [
       "Verifikasi kepemilikan aset",
       "Konfirmasi data perusahaan",
     ],
+    icon: <FileText className="w-8 h-8" />,
   },
   {
     number: 3,
@@ -64,6 +54,7 @@ const steps: Step[] = [
       "Sertifikat digital yang tidak dapat diubah",
       "Akses dashboard verifikasi real-time",
     ],
+    icon: <Database className="w-8 h-8" />,
   },
   {
     number: 4,
@@ -74,44 +65,105 @@ const steps: Step[] = [
       "Laporan verifikasi terperinci",
       "Integrasi dengan sistem bisnis Anda",
     ],
+    icon: <LayoutDashboard className="w-8 h-8" />,
   },
 ];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+    },
+  },
+};
 
 export default function WelcomingPage() {
   const [activeStep, setActiveStep] = useState(0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-background overflow-hidden relative">
       <Navbar />
 
       {/* Background Decorative Elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/10 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
+      <motion.div
+        animate={{
+          rotate: [0, 360, 0],
+          scale: [1, 1.2, 1],
+        }}
+        transition={{
+          duration: 40,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl opacity-20 pointer-events-none"
+      ></motion.div>
+      <motion.div
+        animate={{
+          rotate: [0, -360, 0],
+          scale: [1, 1.3, 1],
+        }}
+        transition={{
+          duration: 50,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/10 to-transparent rounded-full blur-3xl opacity-20 pointer-events-none"
+      ></motion.div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-32 pb-16 relative z-10">
         {/* Header Section */}
-        <div className="text-center mb-16 space-y-4">
-          <div className="flex items-center justify-center gap-3 mb-6">
+        <motion.div
+          className="text-center mb-16 space-y-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div
+            className="flex items-center justify-center gap-3 mb-6"
+            variants={itemVariants}
+          >
             <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-primary-foreground shadow-lg">
-              <ChainIcon className="w-8 h-8" />
+              <Link className="w-8 h-8" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent py-2">
               Selamat datang di UMKMChain
             </h1>
-          </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          </motion.div>
+          <motion.p
+            className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            variants={itemVariants}
+          >
             Platform blockchain terpercaya untuk verifikasi legalitas dan aset
             UMKM. Ikuti 4 langkah mudah untuk memulai perjalanan digital Anda.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Steps Container */}
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Left Side - Steps List */}
-          <div className="space-y-4">
+          <motion.div
+            className="space-y-4"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {steps.map((step, index) => (
-              <button
+              <motion.button
                 key={step.number}
                 onClick={() => setActiveStep(index)}
                 className={`w-full text-left p-6 rounded-2xl border-2 transition-all duration-300 ${
@@ -119,16 +171,21 @@ export default function WelcomingPage() {
                     ? "border-primary bg-gradient-to-r from-secondary/20 to-accent/20 shadow-lg"
                     : "border-border bg-card hover:border-accent hover:shadow-md"
                 }`}
+                variants={itemVariants}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <div className="flex items-start gap-4">
                   <div
-                    className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 ${
+                    className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg transition-all duration-300 ${
                       activeStep === index
                         ? "bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg"
                         : "bg-muted text-muted-foreground"
                     }`}
                   >
-                    {step.number}
+                    {React.cloneElement(step.icon as React.ReactElement, {
+                      className: "w-6 h-6",
+                    })}
                   </div>
                   <div className="flex-1">
                     <h3
@@ -145,51 +202,77 @@ export default function WelcomingPage() {
                     </p>
                   </div>
                 </div>
-              </button>
+              </motion.button>
             ))}
-          </div>
+          </motion.div>
 
           {/* Right Side - Step Details */}
-          <div className="sticky top-24">
-            <div className="bg-card rounded-3xl border-2 border-border shadow-xl p-8 space-y-6">
-              {/* Step Header */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center text-primary-foreground text-2xl font-bold shadow-lg">
-                    {steps[activeStep].number}
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground">
-                      {steps[activeStep].title}
-                    </h2>
-                    <p className="text-muted-foreground">
-                      {steps[activeStep].description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="h-px bg-gradient-to-r from-primary/50 via-accent/50 to-transparent"></div>
-
-              {/* Details List */}
-              <div className="space-y-4">
-                <p className="text-sm font-semibold text-foreground uppercase tracking-wider">
-                  Apa yang akan Anda lakukan:
-                </p>
-                <ul className="space-y-3">
-                  {steps[activeStep].details.map((detail, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mt-0.5 text-primary-foreground">
-                        <CheckCircleIcon />
+          <motion.div
+            className="sticky top-24"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <div className="bg-card/70 backdrop-blur-lg rounded-3xl border-2 border-border/50 shadow-xl p-8 space-y-6">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeStep}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
+                >
+                  {/* Step Header */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center text-primary-foreground shadow-lg">
+                        {React.cloneElement(
+                          steps[activeStep].icon as React.ReactElement,
+                          { className: "w-8 h-8" }
+                        )}
                       </div>
-                      <span className="text-foreground font-medium">
-                        {detail}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-foreground">
+                          {steps[activeStep].title}
+                        </h2>
+                        <p className="text-muted-foreground">
+                          {steps[activeStep].description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="h-px bg-gradient-to-r from-primary/50 via-accent/50 to-transparent"></div>
+
+                  {/* Details List */}
+                  <motion.div
+                    className="space-y-4"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    <p className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                      Apa yang akan Anda lakukan:
+                    </p>
+                    <ul className="space-y-3">
+                      {steps[activeStep].details.map((detail, index) => (
+                        <motion.li
+                          key={index}
+                          className="flex items-start gap-3"
+                          variants={itemVariants}
+                        >
+                          <CheckCircle className="flex-shrink-0 w-5 h-5 text-primary mt-0.5" />
+                          <span className="text-foreground font-medium">
+                            {detail}
+                          </span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </motion.div>
+              </AnimatePresence>
 
               {/* Progress Bar */}
               <div className="space-y-2 pt-4">
@@ -202,27 +285,36 @@ export default function WelcomingPage() {
                   </span>
                 </div>
                 <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
-                    style={{
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-primary to-accent"
+                    animate={{
                       width: `${((activeStep + 1) / steps.length) * 100}%`,
                     }}
-                  ></div>
+                    transition={{
+                      type: "spring",
+                      stiffness: 50,
+                      duration: 0.5,
+                    }}
+                  ></motion.div>
                 </div>
               </div>
 
               {/* CTA Button */}
-              <div className="pt-4 space-y-3">
-                <Link
+              <motion.div
+                className="pt-4 space-y-3"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <NextLink
                   href="/verify"
                   className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold py-4 rounded-xl hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md"
                 >
                   Mulai Verifikasi
-                  <ArrowRightIcon />
-                </Link>
-              </div>
+                  <ArrowRight className="w-5 h-5" />
+                </NextLink>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

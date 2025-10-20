@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import BackButton from "@/components/back-button";
 import UMKMIcon from "@/components/icons/umkm-icon";
 import RegulatorIcon from "@/components/icons/regulator-icon";
 import ChainIcon from "@/components/icons/chain-icon";
@@ -12,13 +11,8 @@ export default function SignupChoicePage() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-secondary/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
-      {/* Header with Back Button */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 relative z-10">
-        <BackButton />
-      </div>
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-28 relative z-10">
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
           {/* Logo & Title */}
           <div className="text-center space-y-4 mb-16">
@@ -42,7 +36,7 @@ export default function SignupChoicePage() {
           <div className="grid md:grid-cols-2 gap-8 w-full max-w-2xl">
             {/* UMKM Card */}
             <Link href="/signup/umkm">
-              <div className="group h-full bg-card rounded-3xl border-2 border-border shadow-lg hover:shadow-2xl hover:border-secondary transition-all duration-300 p-8 cursor-pointer">
+              <div className="group h-full bg-card rounded-3xl border-2 border-border shadow-lg hover:shadow-2xl hover:border-accent transition-all duration-300 p-8 cursor-pointer">
                 <div className="space-y-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-secondary/20 to-accent/20 rounded-2xl flex items-center justify-center group-hover:from-secondary/30 group-hover:to-accent/30 transition-colors">
                     <UMKMIcon className="w-8 h-8 text-primary" />

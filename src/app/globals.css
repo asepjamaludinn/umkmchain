@@ -99,3 +99,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+input[type="password"]::-ms-reveal {
+  display: none;
+}

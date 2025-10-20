@@ -3,7 +3,6 @@
 import type React from "react";
 import { useState } from "react";
 import Link from "next/link";
-import BackButton from "@/components/back-button";
 import ChainIcon from "@/components/icons/chain-icon";
 import {
   Eye,
@@ -13,16 +12,39 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Email instansi tidak valid"),
+  password: z.string().min(1, "Password harus diisi"),
+  remember: z.boolean().optional(),
+});
+
+type LoginForm = z.infer<typeof loginSchema>;
+
 export default function RegulatorLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1500);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      remember: false,
+    },
+  });
+
+  const onSubmit = async (data: LoginForm) => {
+    console.log("Data Login Regulator:", data);
+    // Simulasi login
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Redirect ke dashboard
   };
 
   return (
@@ -31,13 +53,8 @@ export default function RegulatorLoginPage() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
-      {/* Header */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 relative z-10">
-        <BackButton />
-      </div>
-
       {/* Main Section */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-28 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-200px)]">
           {/* Left Content */}
           <div className="space-y-8 hidden lg:block">
@@ -102,7 +119,8 @@ export default function RegulatorLoginPage() {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              {/* 5. Hubungkan form dengan handleSubmit */}
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Email */}
                 <div className="space-y-2">
                   <label
@@ -115,11 +133,14 @@ export default function RegulatorLoginPage() {
                     id="email"
                     type="email"
                     placeholder="nama@instansi.gov.id"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                    required
+                    {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-destructive">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Password */}
@@ -135,10 +156,8 @@ export default function RegulatorLoginPage() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Masukkan password Anda"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
                       className="w-full px-4 py-3 pr-12 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                      required
+                      {...register("password")}
                     />
                     <button
                       type="button"
@@ -155,6 +174,11 @@ export default function RegulatorLoginPage() {
                       )}
                     </button>
                   </div>
+                  {errors.password && (
+                    <p className="text-sm text-destructive">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Remember & Forgot */}
@@ -162,7 +186,9 @@ export default function RegulatorLoginPage() {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
+                      id="remember"
                       className="w-4 h-4 rounded border-border text-primary focus:ring-ring"
+                      {...register("remember")}
                     />
                     <span className="text-foreground">Ingat saya</span>
                   </label>
@@ -177,14 +203,13 @@ export default function RegulatorLoginPage() {
                 {/* Submit */}
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                   className="w-full bg-gradient-to-r from-accent to-primary text-primary-foreground font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                 >
-                  {isLoading ? "Memproses..." : "Masuk"}
+                  {isSubmitting ? "Memproses..." : "Masuk"}
                 </button>
               </form>
 
-              {/* Footer */}
               <div className="text-center space-y-4 pt-4 border-t border-border">
                 <p className="text-muted-foreground">
                   Belum punya akun?{" "}

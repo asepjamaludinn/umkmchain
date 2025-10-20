@@ -3,34 +3,44 @@
 import type React from "react";
 import { useState } from "react";
 import Link from "next/link";
-import BackButton from "@/components/back-button";
 import ChainIcon from "@/components/icons/chain-icon";
 import { Eye, EyeOff } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const regulatorSignupSchema = z.object({
+  institutionName: z.string().min(1, "Nama instansi harus diisi"),
+  officerName: z.string().min(1, "Nama officer harus diisi"),
+  email: z.string().email("Email instansi tidak valid"),
+  password: z.string().min(8, "Password minimal 8 karakter"),
+  verificationCode: z.string().min(1, "Kode verifikasi harus diisi"),
+  walletAddress: z
+    .string()
+    .regex(/^0x[a-fA-F0-9]{40}$/, "Alamat wallet tidak valid"),
+  terms: z.boolean().refine((val) => val === true, {
+    message: "Anda harus menyetujui Syarat & Ketentuan",
+  }),
+});
+
+type RegulatorSignupForm = z.infer<typeof regulatorSignupSchema>;
 
 export default function RegulatorSignupPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    institutionName: "",
-    officerName: "",
-    email: "",
-    password: "",
-    verificationCode: "",
-    walletAddress: "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegulatorSignupForm>({
+    resolver: zodResolver(regulatorSignupSchema),
   });
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    console.log("Data Pendaftaran Regulator:", formData);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+  const onSubmit = async (data: RegulatorSignupForm) => {
+    console.log("Data Pendaftaran Regulator:", data);
+    // Simulasi submit
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Arahkan ke halaman selanjutnya
   };
 
   return (
@@ -39,13 +49,8 @@ export default function RegulatorSignupPage() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
-      {/* Header with Back Button */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 relative z-10">
-        <BackButton />
-      </div>
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-28 relative z-10">
         <div className="flex items-center justify-center">
           <div className="w-full max-w-2xl bg-card rounded-3xl border-2 border-border shadow-xl p-8 space-y-8">
             {/* Header */}
@@ -66,8 +71,8 @@ export default function RegulatorSignupPage() {
               </p>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {/* 5. Hubungkan form dengan handleSubmit */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Nama Instansi */}
               <div className="space-y-2">
                 <label
@@ -78,14 +83,16 @@ export default function RegulatorSignupPage() {
                 </label>
                 <input
                   id="institutionName"
-                  name="institutionName"
                   type="text"
                   placeholder="Masukkan nama instansi"
-                  value={formData.institutionName}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("institutionName")}
                 />
+                {errors.institutionName && (
+                  <p className="text-sm text-destructive">
+                    {errors.institutionName.message}
+                  </p>
+                )}
               </div>
 
               {/* Nama Officer */}
@@ -98,14 +105,16 @@ export default function RegulatorSignupPage() {
                 </label>
                 <input
                   id="officerName"
-                  name="officerName"
                   type="text"
                   placeholder="Masukkan nama officer penanggung jawab"
-                  value={formData.officerName}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("officerName")}
                 />
+                {errors.officerName && (
+                  <p className="text-sm text-destructive">
+                    {errors.officerName.message}
+                  </p>
+                )}
               </div>
 
               {/* Email */}
@@ -118,14 +127,16 @@ export default function RegulatorSignupPage() {
                 </label>
                 <input
                   id="email"
-                  name="email"
                   type="email"
                   placeholder="nama@instansi.gov.id"
-                  value={formData.email}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("email")}
                 />
+                {errors.email && (
+                  <p className="text-sm text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               {/* Password */}
@@ -139,13 +150,10 @@ export default function RegulatorSignupPage() {
                 <div className="relative flex items-center">
                   <input
                     id="password"
-                    name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Buat password yang kuat"
-                    value={formData.password}
-                    onChange={handleChange}
                     className="w-full px-4 py-3 pr-12 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                    required
+                    {...register("password")}
                   />
                   <button
                     type="button"
@@ -162,6 +170,11 @@ export default function RegulatorSignupPage() {
                     )}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               {/* Kode Verifikasi */}
@@ -174,14 +187,16 @@ export default function RegulatorSignupPage() {
                 </label>
                 <input
                   id="verificationCode"
-                  name="verificationCode"
                   type="text"
                   placeholder="Masukkan kode verifikasi khusus"
-                  value={formData.verificationCode}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("verificationCode")}
                 />
+                {errors.verificationCode && (
+                  <p className="text-sm text-destructive">
+                    {errors.verificationCode.message}
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground mt-1">
                   Kode ini diberikan oleh administrator sistem.
                 </p>
@@ -197,14 +212,16 @@ export default function RegulatorSignupPage() {
                 </label>
                 <input
                   id="walletAddress"
-                  name="walletAddress"
                   type="text"
                   placeholder="Contoh: 0xAbC...DeF"
-                  value={formData.walletAddress}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("walletAddress")}
                 />
+                {errors.walletAddress && (
+                  <p className="text-sm text-destructive">
+                    {errors.walletAddress.message}
+                  </p>
+                )}
               </div>
 
               {/* Terms */}
@@ -213,33 +230,40 @@ export default function RegulatorSignupPage() {
                   type="checkbox"
                   id="terms"
                   className="w-4 h-4 rounded border-border text-primary mt-1 focus:ring-ring"
-                  required
+                  {...register("terms")}
                 />
-                <label htmlFor="terms" className="text-sm text-foreground">
-                  Saya setuju dengan{" "}
-                  <Link
-                    href="#"
-                    className="text-primary hover:text-accent font-medium"
-                  >
-                    Syarat & Ketentuan
-                  </Link>{" "}
-                  dan{" "}
-                  <Link
-                    href="#"
-                    className="text-primary hover:text-accent font-medium"
-                  >
-                    Kebijakan Privasi
-                  </Link>
-                </label>
+                <div className="flex-1">
+                  <label htmlFor="terms" className="text-sm text-foreground">
+                    Saya setuju dengan{" "}
+                    <Link
+                      href="#"
+                      className="text-primary hover:text-accent font-medium"
+                    >
+                      Syarat & Ketentuan
+                    </Link>{" "}
+                    dan{" "}
+                    <Link
+                      href="#"
+                      className="text-primary hover:text-accent font-medium"
+                    >
+                      Kebijakan Privasi
+                    </Link>
+                  </label>
+                  {errors.terms && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.terms.message}
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isSubmitting}
                 className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
               >
-                {isLoading ? "Memproses..." : "Daftar Sekarang"}
+                {isSubmitting ? "Memproses..." : "Daftar Sekarang"}
               </button>
             </form>
 

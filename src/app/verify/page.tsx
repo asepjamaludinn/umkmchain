@@ -7,42 +7,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ChainIcon from "@/components/icons/chain-icon";
 import BackButton from "@/components/back-button";
-
-const ArrowRightIcon = () => (
-  <svg
-    className="w-5 h-5"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M13 7l5 5m0 0l-5 5m5-5H6"
-    />
-  </svg>
-);
-const CheckIcon = () => (
-  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-  </svg>
-);
-const ShieldIcon = () => (
-  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
-  </svg>
-);
-const LightningIcon = () => (
-  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-  </svg>
-);
-const StarIcon = () => (
-  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-  </svg>
-);
+import ArrowRightIcon from "@/components/icons/arrow-right-icon";
+import CheckIcon from "@/components/icons/check-icon";
+import ShieldIcon from "@/components/icons/shield-icon";
+import LightningIcon from "@/components/icons/lightning-icon";
+import StarIcon from "@/components/icons/star-icon";
 
 const DashboardCard = () => (
   <div
@@ -299,4 +268,3 @@ export default function VerifyPage() {
     </div>
   );
 }
-  

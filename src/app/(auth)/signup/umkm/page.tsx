@@ -1,43 +1,61 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import Link from "next/link";
-import BackButton from "@/components/back-button";
 import ChainIcon from "@/components/icons/chain-icon";
 import { Eye, EyeOff } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const umkmSignupSchema = z.object({
+  ownerName: z.string().min(1, "Nama pemilik harus diisi"),
+  email: z.string().email("Email tidak valid"),
+  phone: z.string().min(10, "Nomor telepon tidak valid"),
+  businessName: z.string().min(1, "Nama usaha harus diisi"),
+  sector: z.string().min(1, "Sektor harus dipilih"),
+  address: z.string().min(1, "Alamat harus diisi"),
+  walletAddress: z
+    .string()
+    .regex(/^0x[a-fA-F0-9]{40}$/, "Alamat wallet tidak valid")
+    .optional()
+    .or(z.literal("")),
+  password: z.string().min(8, "Password minimal 8 karakter"),
+  terms: z.boolean().refine((val) => val === true, {
+    message: "Anda harus menyetujui Syarat & Ketentuan",
+  }),
+});
+
+type UmkmSignupForm = z.infer<typeof umkmSignupSchema>;
 
 export default function UMKMSignupPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    ownerName: "",
-    email: "",
-    phone: "",
-    businessName: "",
-    sector: "",
-    address: "",
-    walletAddress: "",
-    password: "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<UmkmSignupForm>({
+    resolver: zodResolver(umkmSignupSchema),
+    defaultValues: {
+      ownerName: "",
+      email: "",
+      phone: "",
+      businessName: "",
+      sector: "",
+      address: "",
+      walletAddress: "",
+      password: "",
+      terms: false,
+    },
   });
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const onSubmit = async (data: UmkmSignupForm) => {
+    // 'isSubmitting' akan otomatis true
+    console.log("Data Pendaftaran UMKM:", data);
     // Simulasi submit
-    console.log("Data Pendaftaran UMKM:", formData);
-    setTimeout(() => {
-      setIsLoading(false);
-      // Arahkan ke halaman selanjutnya atau tampilkan pesan sukses
-    }, 1500);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
   };
 
   return (
@@ -46,13 +64,8 @@ export default function UMKMSignupPage() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-secondary/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
-      {/* Header with Back Button */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 relative z-10">
-        <BackButton />
-      </div>
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-28 relative z-10">
         <div className="flex items-center justify-center">
           <div className="w-full max-w-2xl bg-card rounded-3xl border-2 border-border shadow-xl p-8 space-y-8">
             {/* Header */}
@@ -74,7 +87,7 @@ export default function UMKMSignupPage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Nama Pemilik */}
               <div className="space-y-2">
                 <label
@@ -85,14 +98,16 @@ export default function UMKMSignupPage() {
                 </label>
                 <input
                   id="ownerName"
-                  name="ownerName"
                   type="text"
                   placeholder="Masukkan nama pemilik"
-                  value={formData.ownerName}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("ownerName")}
                 />
+                {errors.ownerName && (
+                  <p className="text-sm text-destructive">
+                    {errors.ownerName.message}
+                  </p>
+                )}
               </div>
 
               {/* Email */}
@@ -105,14 +120,16 @@ export default function UMKMSignupPage() {
                 </label>
                 <input
                   id="email"
-                  name="email"
                   type="email"
                   placeholder="nama@perusahaan.com"
-                  value={formData.email}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("email")}
                 />
+                {errors.email && (
+                  <p className="text-sm text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               {/* No Telepon */}
@@ -125,14 +142,16 @@ export default function UMKMSignupPage() {
                 </label>
                 <input
                   id="phone"
-                  name="phone"
                   type="tel"
                   placeholder="+62 812 3456 7890"
-                  value={formData.phone}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("phone")}
                 />
+                {errors.phone && (
+                  <p className="text-sm text-destructive">
+                    {errors.phone.message}
+                  </p>
+                )}
               </div>
 
               {/* Nama Usaha */}
@@ -145,14 +164,16 @@ export default function UMKMSignupPage() {
                 </label>
                 <input
                   id="businessName"
-                  name="businessName"
                   type="text"
                   placeholder="Masukkan nama usaha"
-                  value={formData.businessName}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("businessName")}
                 />
+                {errors.businessName && (
+                  <p className="text-sm text-destructive">
+                    {errors.businessName.message}
+                  </p>
+                )}
               </div>
 
               {/* Sektor */}
@@ -165,17 +186,19 @@ export default function UMKMSignupPage() {
                 </label>
                 <select
                   id="sector"
-                  name="sector"
-                  value={formData.sector}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground"
-                  required
+                  {...register("sector")}
                 >
                   <option value="">Pilih sektor</option>
                   <option value="kuliner">Kuliner</option>
                   <option value="fashion">Fashion</option>
                   <option value="kriya">Kriya</option>
                 </select>
+                {errors.sector && (
+                  <p className="text-sm text-destructive">
+                    {errors.sector.message}
+                  </p>
+                )}
               </div>
 
               {/* Alamat */}
@@ -188,14 +211,16 @@ export default function UMKMSignupPage() {
                 </label>
                 <input
                   id="address"
-                  name="address"
                   type="text"
                   placeholder="Masukkan alamat lengkap"
-                  value={formData.address}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("address")}
                 />
+                {errors.address && (
+                  <p className="text-sm text-destructive">
+                    {errors.address.message}
+                  </p>
+                )}
               </div>
 
               {/* Wallet Address */}
@@ -204,18 +229,20 @@ export default function UMKMSignupPage() {
                   htmlFor="walletAddress"
                   className="block text-sm font-semibold text-foreground"
                 >
-                  Wallet Address (Alamat Dompet Kripto)
+                  Wallet Address (Opsional)
                 </label>
                 <input
                   id="walletAddress"
-                  name="walletAddress"
                   type="text"
                   placeholder="Contoh: 0xAbC...DeF"
-                  value={formData.walletAddress}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  required
+                  {...register("walletAddress")}
                 />
+                {errors.walletAddress && (
+                  <p className="text-sm text-destructive">
+                    {errors.walletAddress.message}
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground mt-1">
                   Dibutuhkan untuk interaksi blockchain. Pastikan alamat benar.
                 </p>
@@ -232,13 +259,10 @@ export default function UMKMSignupPage() {
                 <div className="relative flex items-center">
                   <input
                     id="password"
-                    name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Buat password yang kuat"
-                    value={formData.password}
-                    onChange={handleChange}
                     className="w-full px-4 py-3 pr-12 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                    required
+                    {...register("password")}
                   />
                   <button
                     type="button"
@@ -255,6 +279,11 @@ export default function UMKMSignupPage() {
                     )}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               {/* Terms */}
@@ -263,33 +292,40 @@ export default function UMKMSignupPage() {
                   type="checkbox"
                   id="terms"
                   className="w-4 h-4 rounded border-border text-primary mt-1 focus:ring-ring"
-                  required
+                  {...register("terms")}
                 />
-                <label htmlFor="terms" className="text-sm text-foreground">
-                  Saya setuju dengan{" "}
-                  <Link
-                    href="#"
-                    className="text-primary hover:text-accent font-medium"
-                  >
-                    Syarat & Ketentuan
-                  </Link>{" "}
-                  dan{" "}
-                  <Link
-                    href="#"
-                    className="text-primary hover:text-accent font-medium"
-                  >
-                    Kebijakan Privasi
-                  </Link>
-                </label>
+                <div className="flex-1">
+                  <label htmlFor="terms" className="text-sm text-foreground">
+                    Saya setuju dengan{" "}
+                    <Link
+                      href="#"
+                      className="text-primary hover:text-accent font-medium"
+                    >
+                      Syarat & Ketentuan
+                    </Link>{" "}
+                    dan{" "}
+                    <Link
+                      href="#"
+                      className="text-primary hover:text-accent font-medium"
+                    >
+                      Kebijakan Privasi
+                    </Link>
+                  </label>
+                  {errors.terms && (
+                    <p className="text-sm text-destructive mt-1">
+                      {errors.terms.message}
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isSubmitting}
                 className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
               >
-                {isLoading ? "Memproses..." : "Daftar Sekarang"}
+                {isSubmitting ? "Memproses..." : "Daftar Sekarang"}
               </button>
             </form>
 

@@ -2,28 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-
-const ChainIcon = () => (
-  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-  </svg>
-);
-const CheckIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M5 13l4 4L19 7"
-    />
-  </svg>
-);
+import ChainIcon from "@/components/icons/chain-icon";
+import CheckStrokeIcon from "@/components/icons/check-stroke-icon";
 
 export default function VerifyDataPage() {
   const searchParams = useSearchParams();
@@ -58,23 +38,17 @@ export default function VerifyDataPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary/10 to-accent/10 p-4 sm:p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto py-20">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
-              <ChainIcon />
+              <ChainIcon className="w-8 h-8" />
             </div>
             <span className="text-2xl font-bold text-foreground">
               UMKMChain
             </span>
           </div>
-          <Link
-            href="/verify"
-            className="text-primary hover:text-accent font-semibold transition"
-          >
-            Kembali ke Verifikasi
-          </Link>
         </div>
 
         {/* Main Card */}
@@ -82,7 +56,7 @@ export default function VerifyDataPage() {
           {/* Status */}
           <div className="flex items-center gap-4 pb-6 border-b border-border">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-              <CheckIcon />
+              <CheckStrokeIcon />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Status Verifikasi</p>

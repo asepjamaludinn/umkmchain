@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Menu, X, LogIn, ChevronLeft } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ChainIcon from "@/components/icons/chain-icon";
+import BackButton from "@/components/back-button";
 
 interface NavbarProps {
   showBackButton?: boolean;
@@ -16,7 +16,6 @@ export default function Navbar({
   showBackButton = false,
   showAuthButtons = true,
 }: NavbarProps) {
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -45,18 +44,7 @@ export default function Navbar({
     >
       {/* Left Section - Logo and Back Button */}
       <div className="flex items-center gap-4 lg:gap-8">
-        {showBackButton && (
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => router.back()}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary hover:shadow-lg text-secondary-foreground transition-all duration-200 font-medium shadow-md"
-            aria-label="Kembali"
-          >
-            <ChevronLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Kembali</span>
-          </motion.button>
-        )}
+        {showBackButton && <BackButton />}
 
         {/* Logo */}
         <Link
