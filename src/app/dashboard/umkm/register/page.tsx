@@ -51,27 +51,27 @@ export default function RegisterUMKMPage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        className="mb-6 sm:mb-8"
       >
-        <h1 className="text-3xl font-bold text-foreground mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">
           Daftar UMKM Baru
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Lengkapi data identitas pemilik dan legalitas usaha Anda
         </p>
       </motion.div>
 
-      {/* Progress Steps */}
+      {/* Progress Steps - Responsive */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="mb-8 flex items-center justify-between"
+        className="mb-6 sm:mb-8 flex items-center justify-between gap-2 sm:gap-4"
       >
         {[
           { step: "owner", label: "Data Pemilik" },
@@ -80,10 +80,10 @@ export default function RegisterUMKMPage() {
           <motion.div
             key={item.step}
             variants={itemVariants}
-            className="flex items-center flex-1"
+            className="flex items-center flex-1 gap-2 sm:gap-3"
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold transition-all text-xs sm:text-sm flex-shrink-0 ${
                 step === item.step ||
                 (step === "business" && item.step === "owner")
                   ? "bg-primary text-white"
@@ -92,12 +92,14 @@ export default function RegisterUMKMPage() {
             >
               {index + 1}
             </div>
-            <div className="ml-3">
-              <p className="font-semibold text-foreground">{item.label}</p>
+            <div className="hidden sm:block">
+              <p className="font-semibold text-foreground text-sm">
+                {item.label}
+              </p>
             </div>
             {index < 1 && (
               <div
-                className={`flex-1 h-1 mx-4 rounded-full transition-all ${
+                className={`flex-1 h-1 rounded-full transition-all ${
                   step === "business" ? "bg-primary" : "bg-muted"
                 }`}
               />
@@ -106,14 +108,14 @@ export default function RegisterUMKMPage() {
         ))}
       </motion.div>
 
-      {/* Form Content */}
+      {/* Form Content - Responsive */}
       <motion.div
         key={step}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.3 }}
-        className="bg-card border border-border rounded-xl p-8"
+        className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-8"
       >
         {step === "owner" ? (
           <OwnerForm onSubmit={handleOwnerSubmit} />
@@ -153,14 +155,14 @@ function OwnerForm({ onSubmit }: { onSubmit: (data: OwnerData) => void }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <h2 className="text-2xl font-bold text-foreground mb-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">
         Identitas Pemilik Usaha
       </h2>
 
       {/* Nama */}
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
           Nama Lengkap
         </label>
         <input
@@ -168,16 +170,16 @@ function OwnerForm({ onSubmit }: { onSubmit: (data: OwnerData) => void }) {
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           placeholder="Masukkan nama lengkap"
-          className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
         />
         {errors.name && (
-          <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+          <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.name}</p>
         )}
       </div>
 
       {/* NIK */}
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
           Nomor Induk Kependudukan (NIK)
         </label>
         <input
@@ -188,19 +190,21 @@ function OwnerForm({ onSubmit }: { onSubmit: (data: OwnerData) => void }) {
           }
           placeholder="Masukkan 16 digit NIK"
           maxLength={16}
-          className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
         />
         {errors.ktpNumber && (
-          <p className="text-red-500 text-sm mt-1">{errors.ktpNumber}</p>
+          <p className="text-red-500 text-xs sm:text-sm mt-1">
+            {errors.ktpNumber}
+          </p>
         )}
       </div>
 
       {/* KTP Upload */}
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
           Scan KTP
         </label>
-        <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-all cursor-pointer">
+        <div className="border-2 border-dashed border-border rounded-lg p-4 sm:p-6 text-center hover:border-primary/50 transition-all cursor-pointer">
           <input
             type="file"
             accept="image/*,.pdf"
@@ -213,7 +217,7 @@ function OwnerForm({ onSubmit }: { onSubmit: (data: OwnerData) => void }) {
           <label htmlFor="ktp-upload" className="cursor-pointer">
             <div className="flex justify-center mb-2">
               <svg
-                className="w-8 h-8 text-primary"
+                className="w-6 h-6 sm:w-8 sm:h-8 text-primary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -226,18 +230,20 @@ function OwnerForm({ onSubmit }: { onSubmit: (data: OwnerData) => void }) {
                 />
               </svg>
             </div>
-            <p className="font-semibold text-foreground">
+            <p className="font-semibold text-foreground text-xs sm:text-sm">
               {formData.ktpFile
                 ? formData.ktpFile.name
                 : "Klik untuk upload atau drag & drop"}
             </p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Format: JPG, PNG, PDF (Max 5MB)
             </p>
           </label>
         </div>
         {errors.ktpFile && (
-          <p className="text-red-500 text-sm mt-1">{errors.ktpFile}</p>
+          <p className="text-red-500 text-xs sm:text-sm mt-1">
+            {errors.ktpFile}
+          </p>
         )}
       </div>
 
@@ -246,7 +252,7 @@ function OwnerForm({ onSubmit }: { onSubmit: (data: OwnerData) => void }) {
         type="submit"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-white font-semibold hover:shadow-lg transition-all"
+        className="w-full py-2 sm:py-3 px-3 sm:px-4 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-white font-semibold hover:shadow-lg transition-all text-sm sm:text-base"
       >
         Lanjut ke Data Usaha
       </motion.button>
@@ -290,14 +296,14 @@ function BusinessForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <h2 className="text-2xl font-bold text-foreground mb-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">
         Legalitas Dasar Usaha
       </h2>
 
       {/* Nama Usaha */}
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
           Nama Usaha
         </label>
         <input
@@ -307,16 +313,18 @@ function BusinessForm({
             setFormData({ ...formData, businessName: e.target.value })
           }
           placeholder="Masukkan nama usaha"
-          className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
         />
         {errors.businessName && (
-          <p className="text-red-500 text-sm mt-1">{errors.businessName}</p>
+          <p className="text-red-500 text-xs sm:text-sm mt-1">
+            {errors.businessName}
+          </p>
         )}
       </div>
 
       {/* Alamat */}
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
           Alamat Usaha
         </label>
         <textarea
@@ -326,22 +334,24 @@ function BusinessForm({
           }
           placeholder="Masukkan alamat lengkap usaha"
           rows={3}
-          className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none text-sm"
         />
         {errors.address && (
-          <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+          <p className="text-red-500 text-xs sm:text-sm mt-1">
+            {errors.address}
+          </p>
         )}
       </div>
 
       {/* Sektor */}
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
           Sektor Usaha
         </label>
         <select
           value={formData.sector}
           onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
-          className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
         >
           <option value="">Pilih sektor usaha</option>
           <option value="kuliner">Kuliner</option>
@@ -349,13 +359,15 @@ function BusinessForm({
           <option value="kriya">Kriya</option>
         </select>
         {errors.sector && (
-          <p className="text-red-500 text-sm mt-1">{errors.sector}</p>
+          <p className="text-red-500 text-xs sm:text-sm mt-1">
+            {errors.sector}
+          </p>
         )}
       </div>
 
       {/* NIB */}
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
           Nomor Induk Berusaha (NIB)
         </label>
         <input
@@ -365,19 +377,21 @@ function BusinessForm({
             setFormData({ ...formData, nibNumber: e.target.value })
           }
           placeholder="Masukkan nomor NIB"
-          className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
         />
         {errors.nibNumber && (
-          <p className="text-red-500 text-sm mt-1">{errors.nibNumber}</p>
+          <p className="text-red-500 text-xs sm:text-sm mt-1">
+            {errors.nibNumber}
+          </p>
         )}
       </div>
 
       {/* NIB Upload */}
       <div>
-        <label className="block text-sm font-semibold text-foreground mb-2">
+        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
           Upload Dokumen NIB
         </label>
-        <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-all cursor-pointer">
+        <div className="border-2 border-dashed border-border rounded-lg p-4 sm:p-6 text-center hover:border-primary/50 transition-all cursor-pointer">
           <input
             type="file"
             accept="image/*,.pdf"
@@ -390,7 +404,7 @@ function BusinessForm({
           <label htmlFor="nib-upload" className="cursor-pointer">
             <div className="flex justify-center mb-2">
               <svg
-                className="w-8 h-8 text-primary"
+                className="w-6 h-6 sm:w-8 sm:h-8 text-primary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -403,29 +417,31 @@ function BusinessForm({
                 />
               </svg>
             </div>
-            <p className="font-semibold text-foreground">
+            <p className="font-semibold text-foreground text-xs sm:text-sm">
               {formData.nibFile
                 ? formData.nibFile.name
                 : "Klik untuk upload atau drag & drop"}
             </p>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Format: JPG, PNG, PDF (Max 5MB)
             </p>
           </label>
         </div>
         {errors.nibFile && (
-          <p className="text-red-500 text-sm mt-1">{errors.nibFile}</p>
+          <p className="text-red-500 text-xs sm:text-sm mt-1">
+            {errors.nibFile}
+          </p>
         )}
       </div>
 
-      {/* Buttons */}
-      <div className="flex gap-4">
+      {/* Buttons - Responsive */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
         <motion.button
           type="button"
           onClick={onBack}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="flex-1 py-3 px-4 rounded-lg border border-border text-foreground font-semibold hover:bg-muted transition-all"
+          className="flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg border border-border text-foreground font-semibold hover:bg-muted transition-all text-sm sm:text-base"
         >
           Kembali
         </motion.button>
@@ -433,7 +449,7 @@ function BusinessForm({
           type="submit"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="flex-1 py-3 px-4 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-white font-semibold hover:shadow-lg transition-all"
+          className="flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-white font-semibold hover:shadow-lg transition-all text-sm sm:text-base"
         >
           Daftar UMKM
         </motion.button>
