@@ -1,8 +1,42 @@
 "use client";
 
+import * as React from "react";
 import { motion } from "framer-motion";
-import { BarChart3, Clock, CheckCircle, XCircle } from "lucide-react";
+import {
+  BarChart3,
+  Clock,
+  CheckCircle,
+  XCircle,
+  ArrowUpRight,
+} from "lucide-react";
+import Link from "next/link";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from "recharts";
+import colors from "tailwindcss/colors";
 import { mockDashboardStats, mockUMKMData } from "@/data";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function RegulatorDashboard() {
   const stats = [
@@ -10,45 +44,70 @@ export default function RegulatorDashboard() {
       label: "Total UMKM",
       value: mockDashboardStats.regulator.totalUMKM.toString(),
       icon: BarChart3,
-      color: "from-blue-500 to-blue-600",
     },
     {
       label: "Pending Review",
       value: mockDashboardStats.regulator.pendingReview.toString(),
       icon: Clock,
-      color: "from-yellow-500 to-yellow-600",
     },
     {
       label: "Terverifikasi",
       value: mockDashboardStats.regulator.approved.toString(),
       icon: CheckCircle,
-      color: "from-green-500 to-green-600",
     },
     {
       label: "Ditolak",
       value: mockDashboardStats.regulator.rejected.toString(),
       icon: XCircle,
-      color: "from-red-500 to-red-600",
     },
   ];
 
   const pendingReviews = mockUMKMData
     .filter((umkm) => umkm.status === "pending")
     .map((umkm) => ({
+      id: umkm.id,
       name: umkm.businessName,
       sector: umkm.sector.charAt(0).toUpperCase() + umkm.sector.slice(1),
       status: "Pending",
       date: umkm.registrationDate,
     }));
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
+  type ChartData = {
+    name: string;
+    value: number;
+    fill: string;
   };
 
+  const statusChartData: ChartData[] = [
+    {
+      name: "Pending",
+      value: mockDashboardStats.regulator.pendingReview,
+      fill: colors.yellow[500],
+    },
+    {
+      name: "Terverifikasi",
+      value: mockDashboardStats.regulator.approved,
+      fill: colors.green[500],
+    },
+    {
+      name: "Ditolak",
+      value: mockDashboardStats.regulator.rejected,
+      fill: colors.red[500],
+    },
+  ];
+
+  if (statusChartData.every((d) => d.value === 0)) {
+    statusChartData.push({
+      name: "Belum Ada Data",
+      value: 1,
+      fill: colors.gray[400],
+    });
+  }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
@@ -70,7 +129,7 @@ export default function RegulatorDashboard() {
         </p>
       </motion.div>
 
-      {/* Stats Grid - Responsive */}
+      {/* Stat Cards */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -80,77 +139,141 @@ export default function RegulatorDashboard() {
         {stats.map((stat, index) => {
           const StatIcon = stat.icon;
           return (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ y: -5 }}
-              className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-lg transition-all"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="text-muted-foreground text-xs sm:text-sm font-medium truncate">
+            <motion.div key={index} variants={itemVariants}>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
                     {stat.label}
-                  </p>
-                  <p className="text-2xl sm:text-3xl font-bold text-foreground mt-1 sm:mt-2">
-                    {stat.value}
-                  </p>
-                </div>
-                <div
-                  className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center flex-shrink-0`}
-                >
-                  <StatIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-              </div>
+                  </CardTitle>
+                  <StatIcon className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                </CardContent>
+              </Card>
             </motion.div>
           );
         })}
       </motion.div>
 
-      {/* Pending Reviews */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6"
-      >
-        <h2 className="text-lg sm:text-xl font-bold text-foreground mb-3 sm:mb-4">
-          Pending Review
-        </h2>
-        <div className="space-y-2 sm:space-y-3">
-          {pendingReviews.length > 0 ? (
-            pendingReviews.map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 + index * 0.1 }}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 p-3 sm:p-4 rounded-lg hover:bg-muted transition-all border border-border/50"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground text-sm sm:text-base truncate">
-                    {item.name}
-                  </p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    {item.sector}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <span className="text-xs bg-yellow-500/10 text-yellow-600 px-2 sm:px-3 py-1 rounded-full font-medium whitespace-nowrap">
-                    {item.status}
-                  </span>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    {item.date}
-                  </span>
-                </div>
-              </motion.div>
-            ))
-          ) : (
-            <p className="text-center text-muted-foreground py-4">
-              Tidak ada pending review
-            </p>
-          )}
+      <div className="grid grid-cols-1 gap-6">
+        {" "}
+        <div className="space-y-6">
+          {" "}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Distribusi Status UMKM</CardTitle>
+                <CardDescription>
+                  Persentase UMKM berdasarkan status verifikasi.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="h-[250px] sm:h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statusChartData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      nameKey="name"
+                    >
+                      {statusChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value, name) => [`${value} UMKM`, name]}
+                    />
+                    <Legend wrapperStyle={{ fontSize: "12px" }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </motion.div>
+          {/* Pending Reviews Table */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="text-lg sm:text-xl font-bold">
+                  Pending Review
+                </CardTitle>
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/dashboard/regulator/verify">
+                    Lihat Semua
+                    <ArrowUpRight className="h-4 w-4 ml-2" />
+                  </Link>
+                </Button>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="px-4 sm:px-6">UMKM</TableHead>
+                      <TableHead className="hidden md:table-cell px-4 sm:px-6">
+                        Sektor
+                      </TableHead>
+                      <TableHead className="hidden sm:table-cell px-4 sm:px-6">
+                        Tanggal
+                      </TableHead>
+                      <TableHead className="text-right px-4 sm:px-6">
+                        Status
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pendingReviews.length > 0 ? (
+                      pendingReviews.slice(0, 5).map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell className="px-4 sm:px-6">
+                            <div className="font-medium text-foreground truncate">
+                              {item.name}
+                            </div>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell text-muted-foreground px-4 sm:px-6">
+                            {item.sector}
+                          </TableCell>
+                          <TableCell className="hidden sm:table-cell text-muted-foreground px-4 sm:px-6">
+                            {item.date}
+                          </TableCell>
+                          <TableCell className="text-right px-4 sm:px-6">
+                            <Badge
+                              variant="outline"
+                              className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+                            >
+                              {item.status}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          className="h-24 text-center text-muted-foreground px-4 sm:px-6"
+                        >
+                          Tidak ada pending review.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
