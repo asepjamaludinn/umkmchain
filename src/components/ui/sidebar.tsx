@@ -1,12 +1,9 @@
-// src/components/ui/sidebar.tsx (Diperbaiki - Definisi Komponen Ditambahkan Kembali)
 "use client";
-
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 
-// --- Komponen Utama Sidebar (Terima Props State) ---
 interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   variant?: "sidebar" | string;
   isOpen: boolean;
@@ -18,7 +15,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
   (
     {
       className,
-      variant = "sidebar",
+      //   variant = "sidebar",
       children,
       isOpen,
       isMobile,
@@ -59,15 +56,12 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
   }
 );
 Sidebar.displayName = "Sidebar";
-// ------------------------------
 
-// --- Komponen Lainnya (Header, Content, Footer, Menu, etc.) ---
-// **** DEFINISI YANG HILANG DITAMBAHKAN KEMBALI ****
 const SidebarHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-4 border-b", className)} {...props} /> // Sesuaikan padding jika perlu
+  <div ref={ref} className={cn("p-4 border-b", className)} {...props} />
 ));
 SidebarHeader.displayName = "SidebarHeader";
 
@@ -77,7 +71,7 @@ const SidebarContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex-1 overflow-y-auto px-2 py-2", className)} // Tambah padding x/y
+    className={cn("flex-1 overflow-y-auto px-2 py-2", className)}
     {...props}
   />
 ));
@@ -87,7 +81,7 @@ const SidebarFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-2 border-t", className)} {...props} /> // Kurangi padding footer
+  <div ref={ref} className={cn("p-2 border-t", className)} {...props} />
 ));
 SidebarFooter.displayName = "SidebarFooter";
 
@@ -95,7 +89,7 @@ const SidebarMenu = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("space-y-1", className)} {...props} /> // Hapus padding dari sini
+  <div ref={ref} className={cn("space-y-1", className)} {...props} />
 ));
 SidebarMenu.displayName = "SidebarMenu";
 
@@ -113,22 +107,17 @@ interface SidebarMenuButtonProps extends ButtonProps {
 const SidebarMenuButton = React.forwardRef<
   HTMLButtonElement,
   SidebarMenuButtonProps
->(
-  (
-    { className, variant = "ghost", size = "sm", tooltip, children, ...props },
-    ref
-  ) => (
-    <Button
-      ref={ref}
-      variant={variant}
-      size={size}
-      className={cn("w-full justify-start gap-3 h-auto px-3 py-2", className)}
-      {...props}
-    >
-            {children}   {" "}
-    </Button>
-  )
-);
+>(({ className, variant = "ghost", size = "sm", children, ...props }, ref) => (
+  <Button
+    ref={ref}
+    variant={variant}
+    size={size}
+    className={cn("w-full justify-start gap-3 h-auto px-3 py-2", className)}
+    {...props}
+  >
+          {children}   {" "}
+  </Button>
+));
 SidebarMenuButton.displayName = "SidebarMenuButton";
 
 const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -154,7 +143,7 @@ const SidebarGroup = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("mb-2", className)} {...props} /> // Kurangi margin bottom
+  <div ref={ref} className={cn("mb-2", className)} {...props} />
 ));
 SidebarGroup.displayName = "SidebarGroup";
 
@@ -180,7 +169,7 @@ const SidebarMenuSub = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "ml-7 mt-1 space-y-1 border-l border-border pl-3 py-1", // Sesuaikan indentasi
+      "ml-7 mt-1 space-y-1 border-l border-border pl-3 py-1",
       className
     )}
     {...props}
@@ -204,16 +193,14 @@ const SidebarMenuSubButton = React.forwardRef<
     ref={ref}
     size="sm"
     className={cn(
-      "text-muted-foreground hover:text-foreground h-auto px-3 py-1.5 gap-2", // Kurangi gap
+      "text-muted-foreground hover:text-foreground h-auto px-3 py-1.5 gap-2",
       className
     )}
     {...props}
   />
 ));
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton";
-// **** AKHIR DARI DEFINISI YANG DITAMBAHKAN ****
 
-// Export semua komponen
 export {
   Sidebar,
   SidebarHeader,

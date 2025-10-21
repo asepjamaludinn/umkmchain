@@ -1,33 +1,38 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 
+type OwnerData = {
+  name: string;
+  ktpNumber: string;
+  ktpFile: File | null;
+};
+
+type BusinessData = {
+  businessName: string;
+  address: string;
+  sector: string;
+  nibNumber: string;
+  nibFile: File | null;
+};
+
 export default function RegisterUMKMPage() {
   const [step, setStep] = useState<"owner" | "business">("owner");
-  const [ownerData, setOwnerData] = useState({
+
+  const [ownerData, setOwnerData] = useState<OwnerData>({
     name: "",
     ktpNumber: "",
-    ktpFile: null as File | null,
-  });
-  const [businessData, setBusinessData] = useState({
-    businessName: "",
-    address: "",
-    sector: "",
-    nibNumber: "",
-    nibFile: null as File | null,
+    ktpFile: null,
   });
 
-  const handleOwnerSubmit = (data: typeof ownerData) => {
+  const handleOwnerSubmit = (data: OwnerData) => {
     setOwnerData(data);
     setStep("business");
   };
 
-  const handleBusinessSubmit = async (data: typeof businessData) => {
-    setBusinessData(data);
-    // Here you would send the data to your backend
+  const handleBusinessSubmit = async (data: BusinessData) => {
     console.log("Registration data:", { ownerData, businessData: data });
     alert("UMKM berhasil didaftarkan!");
   };
@@ -123,8 +128,8 @@ export default function RegisterUMKMPage() {
   );
 }
 
-function OwnerForm({ onSubmit }: { onSubmit: (data: any) => void }) {
-  const [formData, setFormData] = useState({
+function OwnerForm({ onSubmit }: { onSubmit: (data: OwnerData) => void }) {
+  const [formData, setFormData] = useState<OwnerData>({
     name: "",
     ktpNumber: "",
     ktpFile: null as File | null,
@@ -253,10 +258,10 @@ function BusinessForm({
   onSubmit,
   onBack,
 }: {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: BusinessData) => void;
   onBack: () => void;
 }) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<BusinessData>({
     businessName: "",
     address: "",
     sector: "",

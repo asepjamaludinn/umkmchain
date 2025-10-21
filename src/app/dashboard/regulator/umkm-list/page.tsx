@@ -242,7 +242,7 @@ export default function UMKMListPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredList.map((umkm, index) => {
+              {filteredList.map((umkm) => {
                 const statusConfig_ =
                   statusConfig[umkm.status as keyof typeof statusConfig];
                 const StatusIcon = statusConfig_.icon;

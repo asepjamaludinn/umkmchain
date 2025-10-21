@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ChainIcon from "@/components/icons/chain-icon";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   CheckCircle,
   Building2,
@@ -17,11 +17,23 @@ import {
   Award,
 } from "lucide-react";
 
+type UmkmData = {
+  businessName: string;
+  owner: string;
+  status: string;
+  registrationDate: string;
+  businessType: string;
+  location: string;
+  employees: number;
+  revenue: string;
+  certifications: string[];
+};
+
 export default function VerifyDataPage() {
   const searchParams = useSearchParams();
   const idHash = searchParams.get("id") || "Tidak Diketahui";
 
-  const mockData: Record<string, any> = {
+  const mockData: Record<string, UmkmData> = {
     "NIB-001": {
       businessName: "PT Maju Jaya Indonesia",
       owner: "Budi Santoso",
@@ -48,7 +60,7 @@ export default function VerifyDataPage() {
 
   const data = mockData[idHash] || mockData["default"];
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -58,7 +70,7 @@ export default function VerifyDataPage() {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,

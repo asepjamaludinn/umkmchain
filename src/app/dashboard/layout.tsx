@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { AppSidebar as DashboardSidebar } from "@/components/dashboard/sidebar";
 
@@ -12,6 +12,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [userType, setUserType] = useState<"umkm" | "regulator" | null>(null);
 
@@ -80,7 +81,7 @@ export default function DashboardLayout({
         <main className="flex-1 overflow-y-auto p-6">
           {" "}
           <motion.div
-            key={router.pathname}
+            key={pathname}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
