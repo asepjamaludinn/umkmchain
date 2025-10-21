@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+
 import { usePathname } from "next/navigation";
 import ChainIcon from "@/components/icons/chain-icon";
 import { NavMain } from "./nav-main";
@@ -38,7 +39,7 @@ export function AppSidebar({ userType, isOpen, onToggle }: AppSidebarProps) {
         initial={{ x: -280 }}
         animate={{ x: isOpen ? 0 : -280 }}
         transition={{ duration: 0.3 }}
-        className="fixed lg:static w-64 h-screen bg-card border-r border-border flex flex-col z-50 lg:z-0 overflow-hidden"
+        className="fixed inset-y-0 left-0 lg:static w-64 lg:h-full bg-card border-r border-border flex flex-col z-50 lg:z-0 overflow-hidden"
       >
         {/* Header with Logo */}
 
