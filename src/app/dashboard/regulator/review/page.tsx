@@ -3,55 +3,29 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { FileText, Eye, EyeOff } from "lucide-react";
+import { mockReviewData } from "@/data";
 
 export default function ReviewPage() {
-  const [selectedDocument, setSelectedDocument] = useState<number | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
   const [reviewStatus, setReviewStatus] = useState<
-    Record<number, "approved" | "rejected" | null>
+    Record<string, "approved" | "rejected" | null>
   >({});
 
-  const documents = [
-    {
-      id: 1,
-      umkmName: "CV. Maju Jaya",
-      owner: "Budi Santoso",
-      documentType: "KTP",
-      fileName: "ktp_budi_santoso.pdf",
-      uploadDate: "2024-01-15",
-      status: "pending",
-      fileSize: "2.5 MB",
-    },
-    {
-      id: 2,
-      umkmName: "CV. Maju Jaya",
-      owner: "Budi Santoso",
-      documentType: "NIB",
-      fileName: "nib_cv_maju_jaya.pdf",
-      uploadDate: "2024-01-15",
-      status: "pending",
-      fileSize: "1.8 MB",
-    },
-    {
-      id: 3,
-      umkmName: "UD. Berkah",
-      owner: "Siti Nurhaliza",
-      documentType: "KTP",
-      fileName: "ktp_siti_nurhaliza.pdf",
-      uploadDate: "2024-01-14",
-      status: "pending",
-      fileSize: "2.3 MB",
-    },
-    {
-      id: 4,
-      umkmName: "Toko Kriya Indah",
-      owner: "Ahmad Wijaya",
-      documentType: "NIB",
-      fileName: "nib_toko_kriya.pdf",
-      uploadDate: "2024-01-13",
-      status: "pending",
-      fileSize: "1.9 MB",
-    },
-  ];
+  const documents = mockReviewData.map((review) => ({
+    id: review.id,
+    umkmName: review.umkmName,
+    owner: review.ownerName,
+    documentType: review.documentType,
+    fileName: `${review.documentType.toLowerCase()}_${review.ownerName.replace(
+      /\s+/g,
+      "_"
+    )}.pdf`,
+    uploadDate: review.submissionDate,
+    status: review.status,
+    fileSize: `${Math.floor(Math.random() * 2) + 1}.${Math.floor(
+      Math.random() * 9
+    )} MB`,
+  }));
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -67,54 +41,56 @@ export default function ReviewPage() {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-2"
+        className="space-y-1 sm:space-y-2"
       >
-        <h1 className="text-3xl font-bold text-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
           Review Dokumen Digital
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Periksa dan validasi dokumen yang diunggah oleh UMKM
         </p>
       </motion.div>
 
-      {/* Documents Grid */}
+      {/* Documents Grid - Responsive */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
       >
         {documents.map((doc) => (
           <motion.div
             key={doc.id}
             variants={itemVariants}
             whileHover={{ y: -5 }}
-            className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all"
+            className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all"
           >
             {/* Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="font-bold text-foreground">{doc.umkmName}</h3>
-                <p className="text-sm text-muted-foreground mt-1">
+            <div className="flex items-start justify-between gap-3 mb-3 sm:mb-4">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-foreground text-sm sm:text-base truncate">
+                  {doc.umkmName}
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 truncate">
                   {doc.owner}
                 </p>
               </div>
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/10 text-yellow-600">
+              <span className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-semibold bg-yellow-500/10 text-yellow-600 whitespace-nowrap flex-shrink-0">
                 {doc.documentType}
               </span>
             </div>
 
             {/* Document Info */}
-            <div className="space-y-3 mb-6 p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-3">
-                <FileText className="w-8 h-8 text-muted-foreground flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="font-semibold text-foreground text-sm">
+            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 p-3 sm:p-4 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-foreground text-xs sm:text-sm truncate">
                     {doc.fileName}
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -134,16 +110,16 @@ export default function ReviewPage() {
               onClick={() =>
                 setSelectedDocument(selectedDocument === doc.id ? null : doc.id)
               }
-              className="w-full py-2 px-4 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 font-semibold mb-4 transition-all flex items-center justify-center gap-2"
+              className="w-full py-2 px-3 sm:px-4 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 font-semibold mb-3 sm:mb-4 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
             >
               {selectedDocument === doc.id ? (
                 <>
-                  <EyeOff className="w-4 h-4" />
+                  <EyeOff className="w-3 h-3 sm:w-4 sm:h-4" />
                   Sembunyikan Preview
                 </>
               ) : (
                 <>
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                   Lihat Preview
                 </>
               )}
@@ -155,20 +131,20 @@ export default function ReviewPage() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="space-y-4 pt-4 border-t border-border"
+                className="space-y-3 sm:space-y-4 pt-3 sm:pt-4 border-t border-border"
               >
-                <div className="bg-muted/50 rounded-lg p-4 text-center text-sm text-muted-foreground">
+                <div className="bg-muted/50 rounded-lg p-3 sm:p-4 text-center text-xs sm:text-sm text-muted-foreground">
                   Preview dokumen akan ditampilkan di sini
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() =>
                       setReviewStatus({ ...reviewStatus, [doc.id]: "approved" })
                     }
-                    className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+                    className={`flex-1 py-2 px-2 sm:px-4 rounded-lg font-semibold transition-all text-xs sm:text-sm ${
                       reviewStatus[doc.id] === "approved"
                         ? "bg-green-500 text-white"
                         : "bg-green-500/10 text-green-600 hover:bg-green-500/20"
@@ -182,7 +158,7 @@ export default function ReviewPage() {
                     onClick={() =>
                       setReviewStatus({ ...reviewStatus, [doc.id]: "rejected" })
                     }
-                    className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${
+                    className={`flex-1 py-2 px-2 sm:px-4 rounded-lg font-semibold transition-all text-xs sm:text-sm ${
                       reviewStatus[doc.id] === "rejected"
                         ? "bg-red-500 text-white"
                         : "bg-red-500/10 text-red-600 hover:bg-red-500/20"
@@ -202,13 +178,15 @@ export default function ReviewPage() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-12 bg-card border border-border rounded-xl"
+          className="text-center py-8 sm:py-12 bg-card border border-border rounded-lg sm:rounded-xl"
         >
-          <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">
+          <FileText className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 sm:mb-2">
             Tidak Ada Dokumen
           </h3>
-          <p className="text-muted-foreground">Semua dokumen telah direview</p>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Semua dokumen telah direview
+          </p>
         </motion.div>
       )}
     </div>

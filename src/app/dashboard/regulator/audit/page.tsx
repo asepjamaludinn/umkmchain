@@ -10,74 +10,27 @@ import {
   User,
   Clock,
 } from "lucide-react";
+import { mockAuditHistory } from "@/data";
 
 export default function AuditPage() {
   const [filterType, setFilterType] = useState<
     "all" | "registration" | "verification" | "certificate"
   >("all");
 
-  const auditLogs = [
-    {
-      id: 1,
-      type: "registration",
-      action: "UMKM Terdaftar",
-      umkmName: "CV. Maju Jaya",
-      actor: "Budi Santoso",
-      timestamp: "2024-01-15 14:30",
-      details: "Pendaftaran UMKM baru dengan NIB 1234567890123456",
-      status: "success",
-    },
-    {
-      id: 2,
-      type: "verification",
-      action: "Dokumen Disetujui",
-      umkmName: "CV. Maju Jaya",
-      actor: "Admin Regulator",
-      timestamp: "2024-01-15 15:45",
-      details: "Semua dokumen telah diverifikasi dan disetujui",
-      status: "success",
-    },
-    {
-      id: 3,
-      type: "certificate",
-      action: "Sertifikat Digenerate",
-      umkmName: "CV. Maju Jaya",
-      actor: "Admin Regulator",
-      timestamp: "2024-01-15 16:00",
-      details: "Sertifikat digital berhasil digenerate dengan ID 0x7a3f8c2b...",
-      status: "success",
-    },
-    {
-      id: 4,
-      type: "verification",
-      action: "Dokumen Ditolak",
-      umkmName: "Butik Fashion Plus",
-      actor: "Admin Regulator",
-      timestamp: "2024-01-12 10:20",
-      details: "Dokumen tidak lengkap, diminta untuk upload ulang",
-      status: "warning",
-    },
-    {
-      id: 5,
-      type: "registration",
-      action: "UMKM Terdaftar",
-      umkmName: "UD. Berkah",
-      actor: "Siti Nurhaliza",
-      timestamp: "2024-01-10 09:15",
-      details: "Pendaftaran UMKM baru dengan NIB 1234567890123457",
-      status: "success",
-    },
-    {
-      id: 6,
-      type: "verification",
-      action: "Dokumen Disetujui",
-      umkmName: "UD. Berkah",
-      actor: "Admin Regulator",
-      timestamp: "2024-01-10 11:30",
-      details: "Semua dokumen telah diverifikasi dan disetujui",
-      status: "success",
-    },
-  ];
+  const auditLogs = mockAuditHistory.map((audit) => ({
+    id: audit.id,
+    type: audit.action.includes("Registered")
+      ? "registration"
+      : audit.action.includes("Verified")
+      ? "certificate"
+      : "verification",
+    action: audit.action,
+    umkmName: audit.umkmName,
+    actor: audit.actor,
+    timestamp: audit.timestamp,
+    details: audit.details,
+    status: "success",
+  }));
 
   const filteredLogs =
     filterType === "all"
@@ -122,24 +75,26 @@ export default function AuditPage() {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-2"
+        className="space-y-1 sm:space-y-2"
       >
-        <h1 className="text-3xl font-bold text-foreground">Audit History</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+          Audit History
+        </h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Pantau semua aktivitas dan perubahan dalam sistem
         </p>
       </motion.div>
 
-      {/* Filter Buttons */}
+      {/* Filter Buttons - Responsive */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap gap-3"
+        className="flex flex-wrap gap-2 sm:gap-3"
       >
         {(["all", "registration", "verification", "certificate"] as const).map(
           (type) => (
@@ -148,7 +103,7 @@ export default function AuditPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setFilterType(type)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium transition-all text-xs sm:text-sm ${
                 filterType === type
                   ? "bg-primary text-white shadow-lg"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -166,12 +121,12 @@ export default function AuditPage() {
         )}
       </motion.div>
 
-      {/* Audit Timeline */}
+      {/* Audit Timeline - Responsive */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="space-y-4"
+        className="space-y-3 sm:space-y-4"
       >
         {filteredLogs.map((log, index) => {
           const typeConfig_ = typeConfig[log.type as keyof typeof typeConfig];
@@ -183,49 +138,51 @@ export default function AuditPage() {
             <motion.div
               key={log.id}
               variants={itemVariants}
-              className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all"
+              className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all"
             >
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-3 sm:gap-4">
                 {/* Timeline Dot */}
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center flex-shrink-0">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${typeConfig_.color}`}
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${typeConfig_.color}`}
                   >
-                    <IconComponent className="w-5 h-5" />
+                    <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   {index < filteredLogs.length - 1 && (
-                    <div className="w-1 h-12 bg-border mt-2" />
+                    <div className="w-1 h-10 sm:h-12 bg-border mt-1 sm:mt-2" />
                   )}
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 pt-1">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-bold text-foreground">
+                <div className="flex-1 pt-0.5 sm:pt-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-foreground text-sm sm:text-base truncate">
                         {log.action}
                       </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1 truncate">
                         {log.umkmName}
                       </p>
                     </div>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${statusConfig_.color}`}
+                      className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-semibold ${statusConfig_.color} whitespace-nowrap flex-shrink-0`}
                     >
                       {statusConfig_.label}
                     </span>
                   </div>
 
-                  <p className="text-sm text-foreground mb-3">{log.details}</p>
+                  <p className="text-xs sm:text-sm text-foreground mb-2 sm:mb-3">
+                    {log.details}
+                  </p>
 
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2 sm:gap-4 text-xs text-muted-foreground flex-wrap">
                     <div className="flex items-center gap-1">
-                      <User className="w-3 h-3" />
-                      <span>{log.actor}</span>
+                      <User className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="truncate">{log.actor}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      <span>{log.timestamp}</span>
+                      <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="whitespace-nowrap">{log.timestamp}</span>
                     </div>
                   </div>
                 </div>
@@ -240,15 +197,13 @@ export default function AuditPage() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-12 bg-card border border-border rounded-xl"
+          className="text-center py-8 sm:py-12 bg-card border border-border rounded-lg sm:rounded-xl"
         >
-          <div className="flex justify-center mb-4">
-            <BarChart3 className="w-12 h-12 text-muted-foreground" />
-          </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">
+          <BarChart3 className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
+          <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 sm:mb-2">
             Tidak Ada Log
           </h3>
-          <p className="text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Tidak ada aktivitas untuk filter yang dipilih
           </p>
         </motion.div>

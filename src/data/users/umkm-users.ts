@@ -1,0 +1,32 @@
+export const umkmUsers = [
+  {
+    id: "umkm-001",
+    email: "budi@umkm.com",
+    password: "demo123",
+    name: "Budi Santoso",
+    type: "umkm" as const,
+    nik: "3201234567890123",
+    phone: "081234567890",
+    address: "Jl. Merdeka No. 123, Jakarta",
+  },
+  {
+    id: "umkm-002",
+    email: "siti@fashion.com",
+    password: "demo123",
+    name: "Siti Nurhaliza",
+    type: "umkm" as const,
+    nik: "3202345678901234",
+    phone: "082345678901",
+    address: "Jl. Sudirman No. 456, Bandung",
+  },
+  {
+    id: "umkm-003",
+    email: "ahmad@kerajinan.com",
+    password: "demo123",
+    name: "Ahmad Wijaya",
+    type: "umkm" as const,
+    nik: "3203456789012345",
+    phone: "083456789012",
+    address: "Jl. Ahmad Yani No. 789, Yogyakarta",
+  },
+];
