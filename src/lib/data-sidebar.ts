@@ -20,6 +20,11 @@ export const dataSidebar = {
             url: "/dashboard/umkm",
             icon: BarChart3,
           },
+        ],
+      },
+      {
+        group: "Perizinan",
+        items: [
           {
             title: "Daftar UMKM",
             url: "/dashboard/umkm/register",
@@ -35,6 +40,11 @@ export const dataSidebar = {
             url: "/dashboard/umkm/history",
             icon: History,
           },
+        ],
+      },
+      {
+        group: "Manajemen",
+        items: [
           {
             title: "Profil Usaha",
             url: "/dashboard/umkm/profile",
@@ -49,6 +59,7 @@ export const dataSidebar = {
       avatar: "BS",
     },
   },
+
   regulator: {
     navMain: [
       {
@@ -59,6 +70,11 @@ export const dataSidebar = {
             url: "/dashboard/regulator",
             icon: BarChart3,
           },
+        ],
+      },
+      {
+        group: "Data & Dokumen",
+        items: [
           {
             title: "Daftar UMKM",
             url: "/dashboard/regulator/umkm-list",
@@ -69,6 +85,11 @@ export const dataSidebar = {
             url: "/dashboard/regulator/review",
             icon: FileCheck,
           },
+        ],
+      },
+      {
+        group: "Verifikasi & Sertifikasi",
+        items: [
           {
             title: "Verifikasi",
             url: "/dashboard/regulator/verify",
@@ -79,6 +100,11 @@ export const dataSidebar = {
             url: "/dashboard/regulator/generate",
             icon: Award,
           },
+        ],
+      },
+      {
+        group: "Monitoring",
+        items: [
           {
             title: "Audit History",
             url: "/dashboard/regulator/audit",

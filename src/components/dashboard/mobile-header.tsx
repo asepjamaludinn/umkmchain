@@ -16,7 +16,6 @@ export default function MobileHeader({
 }: MobileHeaderProps) {
   return (
     <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background/95 backdrop-blur-sm border-b border-border z-40 flex items-center justify-between px-4">
-      {/* Left: Hamburger Menu */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -31,12 +30,10 @@ export default function MobileHeader({
         )}
       </motion.button>
 
-      {/* Center: Title */}
       <h1 className="font-semibold text-foreground text-base flex-1 text-center">
         {title}
       </h1>
 
-      {/* Right: Spacer for balance */}
       <div className="w-10" />
     </header>
   );

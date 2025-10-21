@@ -1,81 +1,266 @@
 "use client";
 
+import * as React from "react";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Search, CheckCircle, Clock, XCircle, FileText } from "lucide-react";
+import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  MoreHorizontal,
+  FileText,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Eye,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronFirstIcon,
+  ChevronLastIcon,
+  Trash2,
+  CircleAlertIcon,
+  Search,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from "@/components/ui/pagination";
+import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { mockUMKMData } from "@/data";
 
+const statusConfig = {
+  approved: {
+    label: "Terverifikasi",
+    color: "bg-green-500/10 text-green-600 border border-green-500/20",
+    icon: CheckCircle,
+    dot: "bg-green-500",
+  },
+  pending: {
+    label: "Pending",
+    color: "bg-yellow-500/10 text-yellow-600 border border-yellow-500/20",
+    icon: Clock,
+    dot: "bg-yellow-500",
+  },
+  rejected: {
+    label: "Ditolak",
+    color: "bg-red-500/10 text-red-600 border border-red-500/20",
+    icon: XCircle,
+    dot: "bg-red-500",
+  },
+};
+
+const sectorConfig = {
+  kuliner: "Kuliner",
+  fashion: "Fashion",
+  kriya: "Kriya",
+};
+
+const umkmListMapped = mockUMKMData.map((umkm) => ({
+  id: umkm.id,
+  name: umkm.businessName,
+  owner: umkm.ownerName,
+  sector: umkm.sector as keyof typeof sectorConfig,
+  address: umkm.businessAddress,
+  nib: umkm.nib,
+  status: umkm.status as keyof typeof statusConfig,
+  registeredDate: umkm.registrationDate,
+  documents: 3,
+  certificateId: umkm.certificateHash,
+}));
+
+type UMKMData = (typeof umkmListMapped)[number];
+
 export default function UMKMListPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<
-    "all" | "pending" | "approved" | "rejected"
-  >("all");
-  const [filterSector, setFilterSector] = useState<
-    "all" | "kuliner" | "fashion" | "kriya"
-  >("all");
-  const [selectedUMKM, setSelectedUMKM] = useState<string | null>(null);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [selectedUMKM, setSelectedUMKM] = React.useState<string | null>(null);
+  const [umkmData, setUmkmData] = React.useState<UMKMData[]>(umkmListMapped);
+  const [umkmToDelete, setUmkmToDelete] = React.useState<string | null>(null);
 
-  const umkmList = mockUMKMData.map((umkm) => ({
-    id: umkm.id,
-    name: umkm.businessName,
-    owner: umkm.ownerName,
-    sector: umkm.sector,
-    address: umkm.businessAddress,
-    nib: umkm.nib,
-    status: umkm.status,
-    registeredDate: umkm.registrationDate,
-    documents: 3,
-    certificateId: umkm.certificateHash,
-  }));
+  const confirmDelete = () => {
+    if (!umkmToDelete) return;
+    setUmkmData((currentData) =>
+      currentData.filter((item) => item.id !== umkmToDelete)
+    );
+    setUmkmToDelete(null);
+  };
 
-  const filteredList = umkmList.filter((umkm) => {
-    const matchSearch =
-      umkm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      umkm.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      umkm.nib.includes(searchTerm);
+  const columns: ColumnDef<UMKMData>[] = [
+    {
+      accessorKey: "name",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nama UMKM <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="pl-4">
+          <div className="font-medium text-foreground">{row.original.name}</div>
+          <div className="text-xs text-muted-foreground">
+            {row.original.nib}
+          </div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "owner",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Pemilik <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => <div>{row.getValue("owner")}</div>,
+    },
+    {
+      accessorKey: "sector",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Sektor <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const sector = row.getValue("sector") as keyof typeof sectorConfig;
+        return <div>{sectorConfig[sector]}</div>;
+      },
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const status = row.getValue("status") as keyof typeof statusConfig;
+        const config = statusConfig[status];
+        const StatusIcon = config.icon;
+        return (
+          <Badge
+            variant="outline"
+            className={`capitalize ${config.color} gap-1.5`}
+          >
+            <StatusIcon className="h-3 w-3" />
+            {config.label}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const umkm = row.original;
+        return (
+          <div className="text-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Buka menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => setSelectedUMKM(umkm.id)}>
+                  <Eye className="mr-2 h-4 w-4" />
+                  Lihat Detail
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-red-500 focus:text-red-500"
+                  onClick={() => setUmkmToDelete(umkm.id)}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Hapus Data
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
+      },
+    },
+  ];
 
-    const matchStatus = filterStatus === "all" || umkm.status === filterStatus;
-    const matchSector = filterSector === "all" || umkm.sector === filterSector;
-
-    return matchSearch && matchStatus && matchSector;
+  const table = useReactTable({
+    data: umkmData,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      globalFilter,
+      columnVisibility,
+      rowSelection,
+    },
+    initialState: { pagination: { pageSize: 10 } },
   });
-
-  const statusConfig = {
-    approved: {
-      label: "Terverifikasi",
-      color: "bg-green-500/10 text-green-600",
-      icon: CheckCircle,
-    },
-    pending: {
-      label: "Pending",
-      color: "bg-yellow-500/10 text-yellow-600",
-      icon: Clock,
-    },
-    rejected: {
-      label: "Ditolak",
-      color: "bg-red-500/10 text-red-600",
-      icon: XCircle,
-    },
-  };
-
-  const sectorConfig = {
-    kuliner: "Kuliner",
-    fashion: "Fashion",
-    kriya: "Kriya",
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.05 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
 
   return (
     <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
@@ -93,173 +278,277 @@ export default function UMKMListPage() {
         </p>
       </motion.div>
 
-      {/* Search and Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-3 sm:space-y-4"
-      >
-        {/* Search */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Cari nama UMKM, pemilik, atau NIB..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 pl-9 sm:pl-10 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
+        <div className="relative w-full sm:max-w-sm">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Input
+            placeholder="Cari nama, pemilik, atau NIB..."
+            value={globalFilter ?? ""}
+            onChange={(event) => setGlobalFilter(event.target.value)}
+            className="w-full h-9 pl-9"
           />
-          <Search className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3.5 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+        <div className="flex w-full sm:w-auto gap-2">
           {/* Status Filter */}
-          <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 sm:pb-0">
-            {(["all", "pending", "approved", "rejected"] as const).map(
-              (status) => (
-                <motion.button
-                  key={status}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setFilterStatus(status)}
-                  className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                    filterStatus === status
-                      ? "bg-primary text-white shadow-lg"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80"
-                  }`}
-                >
-                  {status === "all"
-                    ? "Semua Status"
-                    : status === "pending"
-                    ? "Pending"
-                    : status === "approved"
-                    ? "Terverifikasi"
-                    : "Ditolak"}
-                </motion.button>
-              )
-            )}
-          </div>
-
-          {/* Sector Filter */}
-          <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 sm:pb-0">
-            {(["all", "kuliner", "fashion", "kriya"] as const).map((sector) => (
-              <motion.button
-                key={sector}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setFilterSector(sector)}
-                className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                  filterSector === sector
-                    ? "bg-primary text-white shadow-lg"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-1/2 sm:w-auto h-9">
+                Status <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => table.getColumn("status")?.setFilterValue(null)}
               >
-                {sector === "all" ? "Semua Sektor" : sectorConfig[sector]}
-              </motion.button>
-            ))}
-          </div>
+                Semua Status
+              </DropdownMenuItem>
+              {Object.entries(statusConfig).map(([key, value]) => (
+                <DropdownMenuItem
+                  key={key}
+                  onClick={() => table.getColumn("status")?.setFilterValue(key)}
+                >
+                  <span className="flex items-center">
+                    <div
+                      className={`w-2 h-2 rounded-full ${value.dot} mr-2`}
+                    ></div>
+                    {value.label}
+                  </span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* Sector Filter */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-1/2 sm:w-auto h-9">
+                Sektor <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => table.getColumn("sector")?.setFilterValue(null)}
+              >
+                Semua Sektor
+              </DropdownMenuItem>
+              {Object.entries(sectorConfig).map(([key, value]) => (
+                <DropdownMenuItem
+                  key={key}
+                  onClick={() => table.getColumn("sector")?.setFilterValue(key)}
+                >
+                  {value}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {/* Column Visibility */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="hidden sm:flex h-9">
+                Kolom <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id === "owner"
+                        ? "Pemilik"
+                        : column.id === "sector"
+                        ? "Sektor"
+                        : column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      </motion.div>
+      </div>
 
       {/* UMKM Table */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="bg-card border border-border rounded-lg sm:rounded-xl overflow-hidden"
-      >
+      <div className="bg-card border border-border rounded-lg sm:rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs sm:text-sm font-semibold text-foreground">
-                  Nama UMKM
-                </th>
-                <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs sm:text-sm font-semibold text-foreground hidden sm:table-cell">
-                  Pemilik
-                </th>
-                <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs sm:text-sm font-semibold text-foreground hidden md:table-cell">
-                  Sektor
-                </th>
-                <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs sm:text-sm font-semibold text-foreground">
-                  Status
-                </th>
-                <th className="px-3 sm:px-6 py-2 sm:py-4 text-center text-xs sm:text-sm font-semibold text-foreground">
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredList.map((umkm) => {
-                const statusConfig_ =
-                  statusConfig[umkm.status as keyof typeof statusConfig];
-                const StatusIcon = statusConfig_.icon;
-                return (
-                  <motion.tr
-                    key={umkm.id}
-                    variants={itemVariants}
-                    className="border-b border-border hover:bg-muted/50 transition-all"
+          <Table>
+            <TableHeader className="bg-muted/50">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className="py-2 sm:py-3 px-3 sm:px-4"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
                   >
-                    <td className="px-3 sm:px-6 py-2 sm:py-4">
-                      <p className="font-semibold text-foreground text-xs sm:text-sm truncate">
-                        {umkm.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                        {umkm.nib}
-                      </p>
-                    </td>
-                    <td className="px-3 sm:px-6 py-2 sm:py-4 text-foreground text-xs sm:text-sm hidden sm:table-cell truncate">
-                      {umkm.owner}
-                    </td>
-                    <td className="px-3 sm:px-6 py-2 sm:py-4 text-foreground text-xs sm:text-sm hidden md:table-cell">
-                      {sectorConfig[umkm.sector as keyof typeof sectorConfig]}
-                    </td>
-                    <td className="px-3 sm:px-6 py-2 sm:py-4">
-                      <span
-                        className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-semibold flex items-center gap-1 w-fit ${statusConfig_.color}`}
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className="py-2 sm:py-3 px-3 sm:px-4"
                       >
-                        <StatusIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline">
-                          {statusConfig_.label}
-                        </span>
-                      </span>
-                    </td>
-                    <td className="px-3 sm:px-6 py-2 sm:py-4 text-center">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() =>
-                          setSelectedUMKM(
-                            selectedUMKM === umkm.id ? null : umkm.id
-                          )
-                        }
-                        className="px-2 sm:px-3 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 font-semibold text-xs sm:text-sm transition-all"
-                      >
-                        Detail
-                      </motion.button>
-                    </td>
-                  </motion.tr>
-                );
-              })}
-            </tbody>
-          </table>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <FileText className="w-12 h-12 text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        Tidak ada UMKM ditemukan.
+                      </p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
+      </div>
 
-        {/* Empty State */}
-        {filteredList.length === 0 && (
-          <div className="text-center py-8 sm:py-12">
-            <FileText className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
-            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 sm:mb-2">
-              Tidak Ada UMKM
-            </h3>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Tidak ada UMKM yang sesuai dengan filter yang dipilih
-            </p>
-          </div>
-        )}
-      </motion.div>
+      {/* Pagination */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
+        <div className="text-xs sm:text-sm text-muted-foreground">
+          Total {table.getFilteredRowModel().rows.length} UMKM ditemukan.
+        </div>
+        <div className="flex gap-2">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => table.firstPage()}
+                  disabled={!table.getCanPreviousPage()}
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                >
+                  <span className="sr-only">Halaman pertama</span>
+                  <ChevronFirstIcon className="h-4 w-4" />
+                </Button>
+              </PaginationItem>
+              <PaginationItem>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                >
+                  <span className="sr-only">Halaman sebelumnya</span>
+                  <ChevronLeftIcon className="h-4 w-4" />
+                </Button>
+              </PaginationItem>
+              <PaginationItem>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                >
+                  <span className="sr-only">Halaman selanjutnya</span>
+                  <ChevronRightIcon className="h-4 w-4" />
+                </Button>
+              </PaginationItem>
+              <PaginationItem>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => table.lastPage()}
+                  disabled={!table.getCanNextPage()}
+                  className="h-8 w-8 sm:h-9 sm:w-9"
+                >
+                  <span className="sr-only">Halaman terakhir</span>
+                  <ChevronLastIcon className="h-4 w-4" />
+                </Button>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      </div>
 
-      {/* Detail Modal */}
+      <AlertDialog
+        open={!!umkmToDelete}
+        onOpenChange={(open) => !open && setUmkmToDelete(null)}
+      >
+        <AlertDialogContent>
+          {umkmToDelete &&
+            (() => {
+              const umkmName =
+                umkmData.find((u) => u.id === umkmToDelete)?.name || "UMKM ini";
+              return (
+                <>
+                  <div className="flex flex-col gap-2 max-sm:items-center sm:flex-row sm:gap-4">
+                    <div
+                      className="flex size-9 shrink-0 items-center justify-center rounded-full border"
+                      aria-hidden="true"
+                    >
+                      <CircleAlertIcon
+                        className="opacity-80 text-red-500"
+                        size={16}
+                      />
+                    </div>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Anda yakin ingin menghapus?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Tindakan ini tidak dapat dibatalkan. Ini akan menghapus
+                        data untuk <strong>{umkmName}</strong> secara permanen.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setUmkmToDelete(null)}>
+                      Batal
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={confirmDelete}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      Ya, Hapus
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </>
+              );
+            })()}
+        </AlertDialogContent>
+      </AlertDialog>
+
       {selectedUMKM && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -276,15 +565,12 @@ export default function UMKMListPage() {
             className="bg-card border border-border rounded-lg sm:rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
           >
             {(() => {
-              const umkm = umkmList.find((u) => u.id === selectedUMKM);
+              const umkm = umkmData.find((u) => u.id === selectedUMKM);
               if (!umkm) return null;
-
               const statusConfig_ =
                 statusConfig[umkm.status as keyof typeof statusConfig];
-
               return (
                 <div className="p-4 sm:p-8 space-y-4 sm:space-y-6">
-                  {/* Header */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <h2 className="text-xl sm:text-2xl font-bold text-foreground truncate">
@@ -303,8 +589,6 @@ export default function UMKMListPage() {
                       ✕
                     </motion.button>
                   </div>
-
-                  {/* Details */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
                     {[
                       {
@@ -330,8 +614,6 @@ export default function UMKMListPage() {
                       </div>
                     ))}
                   </div>
-
-                  {/* Actions */}
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t border-border">
                     <motion.button
                       whileHover={{ scale: 1.02 }}

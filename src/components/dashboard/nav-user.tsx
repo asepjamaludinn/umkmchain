@@ -1,45 +1,47 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-
 import { useState } from "react";
-
-import { LogOut, User, Settings, ChevronsUpDown } from "lucide-react";
-
+import { LogOut, User, ChevronsUpDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface NavUserProps {
   user: {
     name: string;
-
     email: string;
-
     avatar?: string;
   };
 }
 
 export function NavUser({ user }: NavUserProps) {
   const [isOpen, setIsOpen] = useState(false);
-
   const router = useRouter();
 
   const handleLogout = () => {
     localStorage.removeItem("userType");
-
     localStorage.removeItem("userEmail");
-
     router.push("/login");
+  };
+
+  const handleEditProfile = () => {
+    setIsOpen(false);
+
+    const userType = localStorage.getItem("userType");
+
+    if (userType === "umkm") {
+      router.push("/dashboard/umkm/profile");
+    } else if (userType === "regulator") {
+      router.push("/dashboard/regulator/profile");
+    } else {
+      router.push("/profile");
+    }
   };
 
   const getInitials = (name: string) => {
     return name
-
       .split(" ")
-
       .map((word) => word[0])
-
       .join("")
-
       .toUpperCase();
   };
 
@@ -58,7 +60,6 @@ export function NavUser({ user }: NavUserProps) {
           <p className="text-sm font-medium text-foreground truncate">
             {user.name}
           </p>
-
           <p className="text-xs text-muted-foreground truncate">{user.email}</p>
         </div>
 
@@ -71,7 +72,6 @@ export function NavUser({ user }: NavUserProps) {
       </motion.button>
 
       {/* Dropdown Menu */}
-
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -89,23 +89,12 @@ export function NavUser({ user }: NavUserProps) {
 
             <div className="p-2 space-y-1">
               <motion.button
-                onClick={() => setIsOpen(false)}
+                onClick={handleEditProfile}
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted transition-all text-sm text-foreground"
                 whileHover={{ x: 4 }}
               >
                 <User className="w-4 h-4" />
-
                 <span>Edit Profile</span>
-              </motion.button>
-
-              <motion.button
-                onClick={() => setIsOpen(false)}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted transition-all text-sm text-foreground"
-                whileHover={{ x: 4 }}
-              >
-                <Settings className="w-4 h-4" />
-
-                <span>Settings</span>
               </motion.button>
             </div>
 
@@ -116,7 +105,6 @@ export function NavUser({ user }: NavUserProps) {
                 whileHover={{ x: 4 }}
               >
                 <LogOut className="w-4 h-4" />
-
                 <span>Logout</span>
               </motion.button>
             </div>

@@ -1,18 +1,80 @@
 "use client";
 
-import type React from "react";
+import * as React from "react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import {
+  type ColumnDef,
+  type SortingState,
+  type ColumnFiltersState,
+  type VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import {
   Mail,
   Phone,
-  FileText,
+  FileText as IdCardIcon,
   MapPin,
-  Users,
-  TrendingUp,
   Plus,
+  User,
+  Briefcase,
+  Edit,
+  Save,
+  X,
+  MoreHorizontal,
+  Search,
+  ArrowUpDown,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Eye,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronFirstIcon,
+  ChevronLastIcon,
 } from "lucide-react";
+import Link from "next/link";
 import { mockUMKMData } from "@/data";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from "@/components/ui/pagination";
 
 type OwnerProfile = {
   name: string;
@@ -21,521 +83,549 @@ type OwnerProfile = {
   nik: string;
   address: string;
   joinDate: string;
+  avatarUrl?: string;
+};
+type BusinessData = {
+  id: string;
+  name: string;
+  sector: string;
+  address: string;
+  nib: string;
+  status: keyof typeof statusConfig;
+  employees: number;
+  revenue: string;
+  certificateId: string | null;
+};
+
+const statusConfig = {
+  approved: {
+    label: "Terverifikasi",
+    icon: CheckCircle,
+    color: "text-green-600",
+    badgeClass: "bg-green-100 border-green-200 text-green-700",
+    dot: "bg-green-500",
+  },
+  pending: {
+    label: "Pending",
+    icon: Clock,
+    color: "text-yellow-600",
+    badgeClass: "bg-yellow-100 border-yellow-200 text-yellow-700",
+    dot: "bg-yellow-500",
+  },
+  rejected: {
+    label: "Ditolak",
+    icon: XCircle,
+    color: "text-red-600",
+    badgeClass: "bg-red-100 border-red-200 text-red-700",
+    dot: "bg-red-500",
+  },
 };
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState<"owner" | "businesses">("owner");
-  const [editingOwner, setEditingOwner] = useState(false);
-  const [showAddBusiness, setShowAddBusiness] = useState(false);
-
-  const ownerProfile: OwnerProfile = {
+  const [editingOwner, setEditingOwner] = React.useState(false);
+  const [ownerProfileData, setOwnerProfileData] = React.useState<OwnerProfile>({
     name: mockUMKMData[0]?.ownerName || "Budi Santoso",
     email: "budi@email.com",
     phone: "+62 812-3456-7890",
     nik: mockUMKMData[0]?.ownerNIK || "3201234567890123",
     address: mockUMKMData[0]?.businessAddress || "Jl. Merdeka No. 123, Jakarta",
     joinDate: mockUMKMData[0]?.registrationDate || "2024-01-01",
-  };
+    avatarUrl: undefined,
+  });
 
-  const businesses = mockUMKMData.map((umkm) => ({
+  const businesses: BusinessData[] = mockUMKMData.map((umkm) => ({
     id: umkm.id,
     name: umkm.businessName,
     sector: umkm.sector.charAt(0).toUpperCase() + umkm.sector.slice(1),
     address: umkm.businessAddress,
     nib: umkm.nib,
-    status: umkm.status === "approved" ? "Terverifikasi" : "Pending",
+    status: umkm.status as keyof typeof statusConfig,
     employees: Math.floor(Math.random() * 10) + 1,
-    revenue: `Rp ${Math.floor(Math.random() * 500) + 100} Juta`,
+    revenue: `Rp ${Math.floor(Math.random() * 500) + 100} Jt`,
+    certificateId: umkm.certificateHash,
   }));
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
+  const handleSaveOwnerProfile = (updatedData: OwnerProfile) => {
+    setOwnerProfileData(updatedData);
+    setEditingOwner(false);
   };
 
   return (
     <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="space-y-1 sm:space-y-2"
       >
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-          Profil Usaha
+          Profil Pengguna
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground">
-          Kelola profil pemilik dan data usaha Anda
+          Kelola profil pribadi dan data usaha Anda.
         </p>
       </motion.div>
 
-      {/* Tabs - Responsive */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex gap-2 sm:gap-4 border-b border-border overflow-x-auto"
-      >
-        {(["owner", "businesses"] as const).map((tab) => (
-          <motion.button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`px-3 sm:px-6 py-2 sm:py-3 font-semibold transition-all border-b-2 whitespace-nowrap text-sm sm:text-base ${
-              activeTab === tab
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {tab === "owner" ? "Profil Pemilik" : "Data Usaha"}
-          </motion.button>
-        ))}
-      </motion.div>
+      <Tabs defaultValue="owner" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="owner">
+            <User className="mr-2 h-4 w-4" />
+            Profil Pemilik
+          </TabsTrigger>
+          <TabsTrigger value="businesses">
+            <Briefcase className="mr-2 h-4 w-4" />
+            Data Usaha
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Owner Profile Tab */}
-      {activeTab === "owner" && (
-        <motion.div
-          key="owner"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-4 sm:space-y-6"
-        >
-          {/* Owner Card */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="bg-card border border-border rounded-lg sm:rounded-xl overflow-hidden"
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 sm:p-8 border-b border-border">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3 sm:gap-6 w-full sm:w-auto">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-white text-2xl sm:text-3xl font-bold flex-shrink-0">
-                    {ownerProfile.name.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h2 className="text-xl sm:text-2xl font-bold text-foreground truncate">
-                      {ownerProfile.name}
-                    </h2>
-                    <p className="text-muted-foreground text-sm">
-                      Pemilik UMKM
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Bergabung sejak {ownerProfile.joinDate}
-                    </p>
-                  </div>
+        <TabsContent value="owner" className="mt-6">
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 sm:p-6 bg-muted/30">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16 sm:h-20 sm:w-20 border-2 border-primary">
+                  <AvatarImage
+                    src={ownerProfileData.avatarUrl}
+                    alt={ownerProfileData.name}
+                  />
+                  <AvatarFallback className="text-xl sm:text-2xl bg-primary/20 text-primary font-semibold">
+                    {ownerProfileData.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase() || "?"}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <CardTitle className="text-xl sm:text-2xl">
+                    {ownerProfileData.name}
+                  </CardTitle>
+                  <CardDescription>
+                    Pemilik UMKM | Bergabung sejak {ownerProfileData.joinDate}
+                  </CardDescription>
                 </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setEditingOwner(!editingOwner)}
-                  className="px-3 sm:px-4 py-2 rounded-lg bg-primary text-white font-semibold hover:shadow-lg transition-all text-sm sm:text-base w-full sm:w-auto"
-                >
-                  {editingOwner ? "Batal" : "Edit"}
-                </motion.button>
               </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-4 sm:p-8">
+              <Button size="sm" onClick={() => setEditingOwner(!editingOwner)}>
+                {editingOwner ? (
+                  <>
+                    <X className="mr-2 h-4 w-4" /> Batal
+                  </>
+                ) : (
+                  <>
+                    <Edit className="mr-2 h-4 w-4" /> Edit Profil
+                  </>
+                )}
+              </Button>
+            </CardHeader>
+            <CardContent className="p-4 sm:p-6">
               {editingOwner ? (
                 <OwnerEditForm
-                  owner={ownerProfile}
-                  onSave={() => setEditingOwner(false)}
+                  owner={ownerProfileData}
+                  onSave={handleSaveOwnerProfile}
+                  onCancel={() => setEditingOwner(false)}
                 />
               ) : (
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="space-y-4 sm:space-y-6"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                    {[
-                      { label: "Email", value: ownerProfile.email, icon: Mail },
-                      {
-                        label: "Nomor Telepon",
-                        value: ownerProfile.phone,
-                        icon: Phone,
-                      },
-                      { label: "NIK", value: ownerProfile.nik, icon: FileText },
-                      {
-                        label: "Alamat",
-                        value: ownerProfile.address,
-                        icon: MapPin,
-                      },
-                    ].map((field, index) => {
-                      const IconComponent = field.icon;
-                      return (
-                        <motion.div
-                          key={index}
-                          variants={itemVariants}
-                          className="space-y-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
-                            <label className="text-xs sm:text-sm font-semibold text-muted-foreground">
-                              {field.label}
-                            </label>
-                          </div>
-                          <p className="text-foreground font-medium text-sm sm:text-base break-words">
-                            {field.value}
-                          </p>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
+                <OwnerProfileDisplay owner={ownerProfileData} />
               )}
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Businesses Tab */}
-      {activeTab === "businesses" && (
-        <motion.div
-          key="businesses"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-4 sm:space-y-6"
-        >
-          {/* Add Business Button */}
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setShowAddBusiness(!showAddBusiness)}
-            className="w-full py-2 sm:py-3 px-3 sm:px-4 rounded-lg border-2 border-dashed border-primary text-primary font-semibold hover:bg-primary/5 transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
-          >
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-            Tambah Usaha Baru
-          </motion.button>
-
-          {/* Add Business Form */}
-          {showAddBusiness && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-card border border-border rounded-lg sm:rounded-xl p-4 sm:p-8"
-            >
-              <AddBusinessForm onClose={() => setShowAddBusiness(false)} />
-            </motion.div>
-          )}
-
-          {/* Businesses Grid - Responsive */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
-          >
-            {businesses.map((business) => (
-              <motion.div
-                key={business.id}
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
-                className="bg-card border border-border rounded-lg sm:rounded-xl overflow-hidden hover:shadow-lg transition-all"
-              >
-                {/* Header */}
-                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-4 sm:p-6 border-b border-border">
-                  <div className="flex items-start justify-between gap-3 mb-2 sm:mb-3">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-lg sm:text-xl font-bold text-foreground truncate">
-                        {business.name}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                        {business.sector}
-                      </p>
-                    </div>
-                    <span className="px-2 sm:px-3 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-600 whitespace-nowrap flex-shrink-0">
-                      {business.status}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
-                  <div className="space-y-2 sm:space-y-3">
-                    {[
-                      {
-                        label: "Alamat",
-                        value: business.address,
-                        icon: MapPin,
-                      },
-                      { label: "NIB", value: business.nib, icon: FileText },
-                      {
-                        label: "Karyawan",
-                        value: `${business.employees} orang`,
-                        icon: Users,
-                      },
-                      {
-                        label: "Omset",
-                        value: business.revenue,
-                        icon: TrendingUp,
-                      },
-                    ].map((field, index) => {
-                      const IconComponent = field.icon;
-                      return (
-                        <div
-                          key={index}
-                          className="flex items-start gap-2 sm:gap-3"
-                        >
-                          <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 text-primary mt-0.5 flex-shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs text-muted-foreground font-semibold">
-                              {field.label}
-                            </p>
-                            <p className="text-foreground font-medium text-xs sm:text-sm break-words">
-                              {field.value}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex-1 py-2 px-2 sm:px-3 rounded-lg bg-primary text-white font-semibold hover:shadow-lg transition-all text-xs sm:text-sm"
-                    >
-                      Edit
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex-1 py-2 px-2 sm:px-3 rounded-lg border border-border text-foreground font-semibold hover:bg-muted transition-all text-xs sm:text-sm"
-                    >
-                      Lihat Detail
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
-      )}
+        <TabsContent value="businesses" className="mt-6 space-y-4">
+          <Button asChild className="w-full sm:w-auto">
+            <Link href="/dashboard/umkm/register">
+              <Plus className="mr-2 h-4 w-4" /> Tambah Usaha Baru
+            </Link>
+          </Button>
+          <BusinessTable businesses={businesses} />
+        </TabsContent>
+      </Tabs>
     </div>
+  );
+}
+
+function OwnerProfileDisplay({ owner }: { owner: OwnerProfile }) {
+  const profileItems = [
+    { label: "Email", value: owner.email, icon: Mail },
+    { label: "Nomor Telepon", value: owner.phone, icon: Phone },
+    { label: "NIK", value: owner.nik, icon: IdCardIcon },
+    { label: "Alamat", value: owner.address, icon: MapPin },
+  ];
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.1 }}
+      className="space-y-4"
+    >
+      {profileItems.map((item, index) => (
+        <React.Fragment key={item.label}>
+          <div className="flex items-start gap-3 pt-4">
+            <item.icon className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <Label className="text-xs font-semibold uppercase text-muted-foreground">
+                {item.label}
+              </Label>
+              <p className="text-sm text-foreground break-words">
+                {item.value || "-"}
+              </p>
+            </div>
+          </div>
+          {index < profileItems.length - 1 && <Separator />}
+        </React.Fragment>
+      ))}
+    </motion.div>
   );
 }
 
 function OwnerEditForm({
   owner,
   onSave,
+  onCancel,
 }: {
   owner: OwnerProfile;
-  onSave: () => void;
+  onSave: (data: OwnerProfile) => void;
+  onCancel: () => void;
 }) {
-  const [formData, setFormData] = useState(owner);
+  const [formData, setFormData] = React.useState(owner);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Updated owner data:", formData);
-    onSave();
+    onSave(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
-        {[
-          { label: "Nama Lengkap", key: "name" },
-          { label: "Email", key: "email" },
-          { label: "Nomor Telepon", key: "phone" },
-          { label: "NIK", key: "nik" },
-        ].map((field) => (
-          <div key={field.key}>
-            <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
-              {field.label}
-            </label>
-            <input
-              type="text"
-              value={formData[field.key as keyof typeof formData]}
-              onChange={(e) =>
-                setFormData({ ...formData, [field.key]: e.target.value })
-              }
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-            />
-          </div>
-        ))}
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="edit-name">Nama Lengkap</Label>
+          <Input
+            id="edit-name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit-email">Email</Label>
+          <Input
+            id="edit-email"
+            type="email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit-phone">Nomor Telepon</Label>
+          <Input
+            id="edit-phone"
+            value={formData.phone}
+            onChange={(e) =>
+              setFormData({ ...formData, phone: e.target.value })
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit-nik">NIK</Label>
+          <Input
+            id="edit-nik"
+            value={formData.nik}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                nik: e.target.value.replace(/\D/g, ""),
+              })
+            }
+            maxLength={16}
+          />
+        </div>
       </div>
-
-      <div>
-        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
-          Alamat
-        </label>
-        <textarea
+      <div className="space-y-2">
+        <Label htmlFor="edit-address">Alamat</Label>
+        <Textarea
+          id="edit-address"
           value={formData.address}
           onChange={(e) =>
             setFormData({ ...formData, address: e.target.value })
           }
           rows={3}
-          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none text-sm"
         />
       </div>
-
-      <div className="flex gap-2 sm:gap-3">
-        <motion.button
-          type="button"
-          onClick={onSave}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg border border-border text-foreground font-semibold hover:bg-muted transition-all text-sm"
-        >
+      <div className="flex justify-end gap-2 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel}>
           Batal
-        </motion.button>
-        <motion.button
-          type="submit"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg bg-primary text-white font-semibold hover:shadow-lg transition-all text-sm"
-        >
-          Simpan Perubahan
-        </motion.button>
+        </Button>
+        <Button type="submit">
+          <Save className="mr-2 h-4 w-4" /> Simpan Perubahan
+        </Button>
       </div>
     </form>
   );
 }
 
-function AddBusinessForm({ onClose }: { onClose: () => void }) {
-  const [formData, setFormData] = useState({
-    businessName: "",
-    sector: "",
-    address: "",
-    nib: "",
-    employees: "",
-    revenue: "",
+function BusinessTable({ businesses }: { businesses: BusinessData[] }) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+
+  const columns: ColumnDef<BusinessData>[] = [
+    {
+      accessorKey: "name",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nama Usaha <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="pl-4 font-medium">{row.original.name}</div>
+      ),
+      size: 200,
+    },
+    {
+      accessorKey: "sector",
+      header: "Sektor",
+      cell: ({ row }) => row.original.sector,
+      size: 100,
+      filterFn: (row, id, value) =>
+        value === undefined || value.includes(row.getValue(id)),
+    },
+    {
+      accessorKey: "status",
+      header: "Status Verifikasi",
+      cell: ({ row }) => {
+        const config = statusConfig[row.original.status];
+        return (
+          <Badge variant="outline" className={`${config.badgeClass} gap-1`}>
+            <config.icon className="h-3 w-3" />
+            {config.label}
+          </Badge>
+        );
+      },
+      size: 150,
+      filterFn: (row, id, value) =>
+        value === undefined || value.includes(row.getValue(id)),
+    },
+    {
+      accessorKey: "certificateId",
+      header: "Sertifikat",
+      cell: ({ row }) => {
+        const certId = row.getValue("certificateId") as string | null;
+        const status = row.original.status;
+        if (certId) {
+          return (
+            <Badge
+              variant="outline"
+              className="bg-green-100 text-green-700 border-green-200 gap-1"
+            >
+              <CheckCircle className="h-3 w-3" />
+              Tersedia
+            </Badge>
+          );
+        } else if (status === "approved") {
+          return (
+            <Badge
+              variant="outline"
+              className="bg-blue-100 border-blue-200 text-blue-700 gap-1"
+            >
+              <Clock className="h-3 w-3" />
+              Proses
+            </Badge>
+          );
+        } else {
+          return (
+            <Badge variant="destructive" className="gap-1">
+              <XCircle className="h-3 w-3" />
+              Belum Ada
+            </Badge>
+          );
+        }
+      },
+      size: 120,
+    },
+    {
+      id: "actions",
+      header: () => <div className="text-center">Aksi</div>,
+      cell: ({ row }) => (
+        <div className="text-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <Link href={`/dashboard/umkm/detail/${row.original.id}`}>
+                  <Eye className="mr-2 h-4 w-4" /> Detail Usaha
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={`/dashboard/umkm/edit/${row.original.id}`}>
+                  <Edit className="mr-2 h-4 w-4" /> Edit Usaha
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+      size: 80,
+      enableHiding: false,
+    },
+  ];
+
+  const table = useReactTable({
+    data: businesses,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    state: { sorting, columnFilters, globalFilter, columnVisibility },
+    initialState: { pagination: { pageSize: 5 } },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("New business data:", formData);
-    onClose();
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-      <h3 className="text-lg sm:text-xl font-bold text-foreground">
-        Tambah Usaha Baru
-      </h3>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
-        <div>
-          <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
-            Nama Usaha
-          </label>
-          <input
-            type="text"
-            value={formData.businessName}
-            onChange={(e) =>
-              setFormData({ ...formData, businessName: e.target.value })
-            }
-            placeholder="Masukkan nama usaha"
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-            required
-          />
+    <Card>
+      <CardHeader>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="relative w-full sm:flex-1 md:grow-0">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Cari usaha..."
+              value={globalFilter ?? ""}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              className="h-9 pl-8 w-full md:w-[200px] lg:w-[250px]"
+            />
+          </div>
         </div>
-
-        <div>
-          <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
-            Sektor Usaha
-          </label>
-          <select
-            value={formData.sector}
-            onChange={(e) =>
-              setFormData({ ...formData, sector: e.target.value })
-            }
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-            required
-          >
-            <option value="">Pilih sektor</option>
-            <option value="Kuliner">Kuliner</option>
-            <option value="Fashion">Fashion</option>
-            <option value="Kriya">Kriya</option>
-          </select>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {table.getHeaderGroups().map((hg) =>
+                  hg.headers.map((h) => (
+                    <TableHead
+                      key={h.id}
+                      style={{
+                        width:
+                          h.getSize() !== 150 ? `${h.getSize()}px` : undefined,
+                      }}
+                      className="px-3 sm:px-4 py-2"
+                    >
+                      {flexRender(h.column.columnDef.header, h.getContext())}
+                    </TableHead>
+                  ))
+                )}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        style={{
+                          width:
+                            cell.column.getSize() !== 150
+                              ? `${cell.column.getSize()}px`
+                              : undefined,
+                        }}
+                        className="px-3 sm:px-4 py-2"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    Belum ada data usaha.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
-
-        <div>
-          <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
-            NIB
-          </label>
-          <input
-            type="text"
-            value={formData.nib}
-            onChange={(e) => setFormData({ ...formData, nib: e.target.value })}
-            placeholder="Masukkan nomor NIB"
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
-            Jumlah Karyawan
-          </label>
-          <input
-            type="number"
-            value={formData.employees}
-            onChange={(e) =>
-              setFormData({ ...formData, employees: e.target.value })
-            }
-            placeholder="Masukkan jumlah karyawan"
-            className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm"
-            required
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-xs sm:text-sm font-semibold text-foreground mb-2">
-          Alamat Usaha
-        </label>
-        <textarea
-          value={formData.address}
-          onChange={(e) =>
-            setFormData({ ...formData, address: e.target.value })
-          }
-          placeholder="Masukkan alamat lengkap"
-          rows={3}
-          className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none text-sm"
-          required
-        />
-      </div>
-
-      <div className="flex gap-2 sm:gap-3">
-        <motion.button
-          type="button"
-          onClick={onClose}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg border border-border text-foreground font-semibold hover:bg-muted transition-all text-sm"
-        >
-          Batal
-        </motion.button>
-        <motion.button
-          type="submit"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="flex-1 py-2 sm:py-3 px-3 sm:px-4 rounded-lg bg-primary text-white font-semibold hover:shadow-lg transition-all text-sm"
-        >
-          Tambah Usaha
-        </motion.button>
-      </div>
-    </form>
+      </CardContent>
+      {table.getPageCount() > 1 && (
+        <CardFooter className="flex items-center justify-between gap-2 p-4 border-t">
+          <div className="text-xs text-muted-foreground">
+            Hal {table.getState().pagination.pageIndex + 1} dari{" "}
+            {table.getPageCount()}
+          </div>
+          <div className="flex gap-1">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => table.firstPage()}
+                    disabled={!table.getCanPreviousPage()}
+                    className="h-8 w-8"
+                  >
+                    <ChevronFirstIcon className="h-4 w-4" />
+                  </Button>
+                </PaginationItem>
+                <PaginationItem>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                    className="h-8 w-8"
+                  >
+                    <ChevronLeftIcon className="h-4 w-4" />
+                  </Button>
+                </PaginationItem>
+                <PaginationItem>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                    className="h-8 w-8"
+                  >
+                    <ChevronRightIcon className="h-4 w-4" />
+                  </Button>
+                </PaginationItem>
+                <PaginationItem>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => table.lastPage()}
+                    disabled={!table.getCanNextPage()}
+                    className="h-8 w-8"
+                  >
+                    <ChevronLastIcon className="h-4 w-4" />
+                  </Button>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </CardFooter>
+      )}
+    </Card>
   );
 }
