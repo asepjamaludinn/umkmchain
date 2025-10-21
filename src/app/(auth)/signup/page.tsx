@@ -1,187 +1,143 @@
 "use client";
 
-import type React from "react";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Store, FileText } from "lucide-react";
+import ChainIcon from "@/components/icons/chain-icon";
 
-const BuildingIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
-    />
-  </svg>
-);
-
-const GovernmentIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 3v1m6.364 1.636l-.707.707M21 12h-1m1.364 6.364l-.707-.707M12 21v-1m-6.364-1.636l.707-.707M3 12h1M3.636 5.636l.707.707"
-    />
-  </svg>
-);
-
-const RoleCard = ({
-  title,
-  description,
-  icon,
-  href,
-  isSelected,
-  onClick,
-}: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  href: string;
-  isSelected: boolean;
-  onClick: () => void;
-}) => (
-  <button
-    onClick={onClick}
-    className={`w-full p-6 rounded-2xl border-2 transition-all duration-300 text-left ${
-      isSelected
-        ? "border-blue-600 bg-blue-50 shadow-lg"
-        : "border-gray-200 bg-white hover:border-blue-300 hover:shadow-md"
-    }`}
-  >
-    <div className="flex items-start gap-4">
-      <div
-        className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-          isSelected ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"
-        }`}
-      >
-        {icon}
-      </div>
-      <div className="flex-1">
-        <h3 className="font-bold text-gray-900 mb-1">{title}</h3>
-        <p className="text-sm text-gray-600">{description}</p>
-      </div>
-      <div
-        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-          isSelected ? "border-blue-600 bg-blue-600" : "border-gray-300"
-        }`}
-      >
-        {isSelected && <div className="w-2 h-2 bg-white rounded-full"></div>}
-      </div>
-    </div>
-  </button>
-);
-
-export default function SignUpPage() {
-  const router = useRouter();
-  const [selectedRole, setSelectedRole] = useState<"umkm" | "regulator" | null>(
-    null
-  );
-
-  const handleContinue = () => {
-    if (selectedRole) {
-      router.push(`/signup/${selectedRole}`);
-    }
-  };
-
+export default function SignupChoicePage() {
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 sm:p-8 bg-gray-50 font-sans">
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col p-8 sm:p-10 border border-gray-100">
-        {/* Background Gradient */}
-        <div
-          className="absolute inset-0 opacity-40 mix-blend-multiply pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(0, 128, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%, rgba(128, 0, 255, 0.1) 100%)",
-          }}
-        >
-          <div className="absolute bottom-0 -right-1/4 w-3/4 h-3/4 rounded-full bg-blue-500 opacity-5 blur-3xl transform translate-y-1/2"></div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-background relative overflow-hidden">
+      {/* Background Gradient Elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-secondary/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col gap-8">
-          {/* Header */}
-          <div>
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">⛓</span>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-28 relative z-10">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+          {/* Logo & Title */}
+          <div className="text-center space-y-4 mb-16">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-primary-foreground shadow-lg">
+                <ChainIcon className="w-8 h-8" />
               </div>
-              <span className="text-lg font-bold text-gray-900">UMKMChain</span>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                UMKMChain
+              </h1>
             </div>
-
-            <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-gray-900">
+            <h2 className="text-3xl font-bold text-foreground">
               Buat Akun Baru
-            </h1>
-            <p className="mt-2 text-base text-gray-600">
-              Pilih tipe akun untuk memulai
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Daftar sebagai UMKM atau Regulator
             </p>
           </div>
 
-          {/* Role Selection */}
-          <div className="space-y-4">
-            <RoleCard
-              title="Sebagai UMKM"
-              description="Daftarkan aset dan dokumen bisnis Anda"
-              icon={<BuildingIcon />}
-              href="/signup/umkm"
-              isSelected={selectedRole === "umkm"}
-              onClick={() => setSelectedRole("umkm")}
-            />
+          {/* Choice Cards */}
+          <div className="grid md:grid-cols-2 gap-8 w-full max-w-2xl">
+            {/* UMKM Card */}
+            <Link href="/signup/umkm">
+              <div className="group h-full bg-card rounded-3xl border-2 border-border shadow-lg hover:shadow-2xl hover:border-accent transition-all duration-300 p-8 cursor-pointer">
+                <div className="space-y-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-secondary/20 to-accent/20 rounded-2xl flex items-center justify-center group-hover:from-secondary/30 group-hover:to-accent/30 transition-colors">
+                    <Store className="w-8 h-8 text-primary" />
+                  </div>
 
-            <RoleCard
-              title="Sebagai Regulator"
-              description="Pantau dan verifikasi aset UMKM"
-              icon={<GovernmentIcon />}
-              href="/signup/regulator"
-              isSelected={selectedRole === "regulator"}
-              onClick={() => setSelectedRole("regulator")}
-            />
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-bold text-foreground">
+                      Daftar UMKM
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Buat akun UMKM untuk memulai verifikasi blockchain
+                    </p>
+                  </div>
+
+                  <ul className="space-y-3">
+                    {[
+                      "Proses pendaftaran mudah",
+                      "Verifikasi cepat dan aman",
+                      "Dukungan pelanggan 24/7",
+                    ].map((text, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center gap-3 text-sm text-foreground"
+                      >
+                        <svg
+                          className="w-5 h-5 text-primary flex-shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                        </svg>
+                        {text}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button className="w-full mt-6 bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 shadow-md group-hover:scale-105">
+                    Daftar sebagai UMKM
+                  </button>
+                </div>
+              </div>
+            </Link>
+
+            {/* Regulator Card */}
+            <Link href="/signup/regulator">
+              <div className="group h-full bg-card rounded-3xl border-2 border-border shadow-lg hover:shadow-2xl hover:border-accent transition-all duration-300 p-8 cursor-pointer">
+                <div className="space-y-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl flex items-center justify-center group-hover:from-accent/30 group-hover:to-primary/30 transition-colors">
+                    <FileText className="w-8 h-8 text-primary" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-bold text-foreground">
+                      Daftar Regulator
+                    </h3>
+                    <p className="text-muted-foreground">
+                      Buat akun Regulator untuk memverifikasi UMKM
+                    </p>
+                  </div>
+
+                  <ul className="space-y-3">
+                    {[
+                      "Verifikasi terstruktur",
+                      "Dashboard manajemen lengkap",
+                      "Keamanan tingkat enterprise",
+                    ].map((text, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center gap-3 text-sm text-foreground"
+                      >
+                        <svg
+                          className="w-5 h-5 text-primary flex-shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                        </svg>
+                        {text}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button className="w-full mt-6 bg-gradient-to-r from-accent to-primary text-primary-foreground font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 shadow-md group-hover:scale-105">
+                    Daftar sebagai Regulator
+                  </button>
+                </div>
+              </div>
+            </Link>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col gap-3 pt-4 border-t border-gray-200">
-            <button
-              onClick={handleContinue}
-              disabled={!selectedRole}
-              className={`w-full py-3 px-4 rounded-full font-semibold transition-all duration-300 ${
-                selectedRole
-                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-lg hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 active:scale-95"
-                  : "bg-gray-200 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              Lanjutkan
-            </button>
-
-            <div className="text-center text-sm text-gray-600">
+          {/* Footer */}
+          <div className="text-center mt-12 space-y-4">
+            <p className="text-muted-foreground">
               Sudah punya akun?{" "}
               <Link
                 href="/login"
-                className="text-blue-600 font-semibold hover:underline"
+                className="text-primary hover:text-accent font-semibold"
               >
                 Masuk di sini
               </Link>
-            </div>
-
-            <div className="text-center text-xs text-gray-500 pt-2 border-t border-gray-200">
-              <Link
-                href="/verify"
-                className="text-blue-600 hover:underline font-medium"
-              >
-                Cek Verifikasi ID
-              </Link>
-            </div>
+            </p>
           </div>
         </div>
       </div>

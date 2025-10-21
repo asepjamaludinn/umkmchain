@@ -1,3 +1,105 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warna Netral (Dasar) */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%; /* Hitam (Untuk teks utama) */
+
+    /* Warna Brand/Aksi (Palet Baru dalam HSL) */
+    --primary: 206 96% 18%; /* #023859 (Dark Blue 1) */
+    --primary-foreground: 210 40% 98%; /* Putih kebiruan */
+
+    --accent: 203 56% 35%; /* #26658c (Medium Blue) */
+    --accent-foreground: 210 40% 98%; /* Putih kebiruan */
+
+    --secondary: 219 96% 13%; /* #011c40 (Dark Blue 2 - BARU) */
+    --secondary-foreground: 210 40% 98%; /* Putih kebiruan (Agar terbaca di atas biru gelap) */
+
+    /* Warna Muted */
+    --muted: 210 40% 96.1%; /* Abu-abu kebiruan sangat pucat */
+    --muted-foreground: 215.4 16.3% 46.9%; /* Abu-abu sedang */
+
+    /* Warna UI */
+    --border: 214.3 31.8% 91.4%; /* Abu-abu border */
+    --input: 214.3 31.8% 91.4%; /* Abu-abu input */
+    --ring: 203 56% 35%; /* Medium Blue (untuk focus ring) */
+
+    /* Warna Lainnya */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%; /* Hitam */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%; /* Hitam */
+
+    /* Warna Destruktif */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Variabel Lainnya */
+    --radius: 0.625rem;
+    /* Variabel Sidebar */
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 240 10% 3.9%;
+    --sidebar-primary: 206 96% 18%; /* Dark Blue 1 */
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 203 56% 35%; /* Medium Blue */
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 203 56% 35%;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 210 40% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 203 56% 35%;
+    --primary-foreground: 210 40% 98%;
+
+    --accent: 206 96% 18%; /* Dark Blue 1 */
+    --accent-foreground: 210 40% 98%;
+
+    --secondary: 219 96% 13%; /* Dark Blue 2 (Sama seperti light mode, sangat gelap) */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 215 20.2% 34.1%; /* Abu-abu gelap */
+    --muted-foreground: 217.9 10.6% 64.9%; /* Abu-abu terang */
+
+    --border: 217.2 32.6% 17.5%; /* Abu-abu gelap border */
+    --input: 217.2 32.6% 17.5%; /* Abu-abu gelap input */
+    --ring: 203 56% 35%; /* Medium Blue */
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* Sidebar Dark Mode */
+    --sidebar: 240 10% 3.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 203 56% 35%; /* Medium Blue */
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 206 96% 18%; /* Dark Blue 1 */
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 203 56% 35%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+input[type="password"]::-ms-reveal {
+  display: none;
+}
