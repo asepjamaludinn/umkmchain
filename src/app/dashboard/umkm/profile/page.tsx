@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import {
@@ -14,12 +13,21 @@ import {
   Plus,
 } from "lucide-react";
 
+type OwnerProfile = {
+  name: string;
+  email: string;
+  phone: string;
+  nik: string;
+  address: string;
+  joinDate: string;
+};
+
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<"owner" | "businesses">("owner");
   const [editingOwner, setEditingOwner] = useState(false);
   const [showAddBusiness, setShowAddBusiness] = useState(false);
 
-  const ownerProfile = {
+  const ownerProfile: OwnerProfile = {
     name: "Budi Santoso",
     email: "budi@email.com",
     phone: "+62 812-3456-7890",
@@ -335,7 +343,7 @@ function OwnerEditForm({
   owner,
   onSave,
 }: {
-  owner: typeof owner;
+  owner: OwnerProfile;
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState(owner);
@@ -361,7 +369,7 @@ function OwnerEditForm({
             </label>
             <input
               type="text"
-              value={formData[field.key as keyof typeof formData] as string}
+              value={formData[field.key as keyof typeof formData]}
               onChange={(e) =>
                 setFormData({ ...formData, [field.key]: e.target.value })
               }

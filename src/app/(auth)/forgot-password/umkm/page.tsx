@@ -45,7 +45,6 @@ export default function UMKMForgotPasswordPage() {
       <div className="flex justify-center px-6 pt-40">
         <div className="w-full max-w-md bg-card rounded-3xl border-2 border-border shadow-xl p-8 space-y-8">
           {isSubmitted ? (
-            // ✅ Tampilan setelah form terkirim
             <div className="text-center space-y-4 py-8">
               <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center text-primary-foreground shadow-lg">
                 <Mail className="w-8 h-8" />

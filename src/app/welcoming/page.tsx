@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import NextLink from "next/link";
 import Navbar from "@/components/layout/navbar";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
   Link,
   CheckCircle,
@@ -19,7 +19,7 @@ interface Step {
   title: string;
   description: string;
   details: string[];
-  icon: React.ReactNode;
+  icon: React.ReactElement<{ className?: string }>;
 }
 
 const steps: Step[] = [
@@ -69,7 +69,7 @@ const steps: Step[] = [
   },
 ];
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -79,7 +79,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
@@ -183,10 +183,14 @@ export default function WelcomingPage() {
                         : "bg-muted text-muted-foreground"
                     }`}
                   >
-                    {React.cloneElement(step.icon as React.ReactElement, {
-                      className: "w-6 h-6",
-                    })}
+                    {React.cloneElement(
+                      step.icon as React.ReactElement<{ className?: string }>,
+                      {
+                        className: "w-6 h-6",
+                      }
+                    )}
                   </div>
+
                   <div className="flex-1">
                     <h3
                       className={`font-semibold text-lg transition-colors duration-300 ${
@@ -228,7 +232,9 @@ export default function WelcomingPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center text-primary-foreground shadow-lg">
                         {React.cloneElement(
-                          steps[activeStep].icon as React.ReactElement,
+                          steps[activeStep].icon as React.ReactElement<{
+                            className?: string;
+                          }>,
                           { className: "w-8 h-8" }
                         )}
                       </div>
