@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import NextLink from "next/link";
-import Navbar from "@/components/layout/navbar"; // Pastikan path ini benar
+import Navbar from "@/components/layout/navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Link,
@@ -98,7 +98,6 @@ export default function WelcomingPage() {
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-background overflow-hidden relative">
       <Navbar />
 
-      {/* Background Decorative Elements */}
       <motion.div
         animate={{
           rotate: [0, 360, 0],
@@ -106,10 +105,10 @@ export default function WelcomingPage() {
         }}
         transition={{
           duration: 40,
-          repeat: Infinity,
+          repeat: Number.POSITIVE_INFINITY,
           ease: "easeInOut",
         }}
-        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl opacity-20 pointer-events-none"
+        className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/15 to-transparent rounded-full blur-3xl opacity-25 pointer-events-none"
       ></motion.div>
       <motion.div
         animate={{
@@ -118,10 +117,10 @@ export default function WelcomingPage() {
         }}
         transition={{
           duration: 50,
-          repeat: Infinity,
+          repeat: Number.POSITIVE_INFINITY,
           ease: "easeInOut",
         }}
-        className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/10 to-transparent rounded-full blur-3xl opacity-20 pointer-events-none"
+        className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/15 to-transparent rounded-full blur-3xl opacity-25 pointer-events-none"
       ></motion.div>
 
       {/* Main Content */}
@@ -174,6 +173,7 @@ export default function WelcomingPage() {
                 variants={itemVariants}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
+                aria-pressed={activeStep === index}
               >
                 <div className="flex items-start gap-4">
                   <div

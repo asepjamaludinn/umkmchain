@@ -12,7 +12,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const umkmSignupSchema = z.object({
   ownerName: z.string().min(1, "Nama pemilik harus diisi"),
   email: z.string().email("Email tidak valid"),
-  phone: z.string().min(10, "Nomor telepon tidak valid"),
+  phone: z
+    .string()
+    .regex(/^\+?\d+$/, {
+      message: "Format nomor telepon tidak valid. Hanya angka dan '+' di awal.",
+    })
+    .min(10, "Nomor telepon minimal 10 digit (termasuk +62 jika ada)"),
   businessName: z.string().min(1, "Nama usaha harus diisi"),
   sector: z.string().min(1, "Sektor harus dipilih"),
   address: z.string().min(1, "Alamat harus diisi"),
@@ -51,8 +56,9 @@ export default function UMKMSignupPage() {
     },
   });
 
+  const { onChange: onPhoneChange, ...phoneRest } = register("phone");
+
   const onSubmit = async (data: UmkmSignupForm) => {
-    // 'isSubmitting' akan otomatis true
     console.log("Data Pendaftaran UMKM:", data);
     // Simulasi submit
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -143,9 +149,26 @@ export default function UMKMSignupPage() {
                 <input
                   id="phone"
                   type="tel"
-                  placeholder="+62 812 3456 7890"
+                  inputMode="tel"
+                  placeholder="+6281234567890"
                   className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-primary focus:ring-ring focus:outline-none transition-colors bg-background text-foreground placeholder-muted-foreground"
-                  {...register("phone")}
+                  {...phoneRest}
+                  onChange={(e) => {
+                    const val = e.target.value;
+
+                    const filteredVal = val
+                      .split("")
+                      .filter((char, index) => {
+                        if (index === 0 && char === "+") return true;
+
+                        return /\d/.test(char);
+                      })
+                      .join("");
+
+                    e.target.value = filteredVal;
+
+                    onPhoneChange(e);
+                  }}
                 />
                 {errors.phone && (
                   <p className="text-sm text-destructive">

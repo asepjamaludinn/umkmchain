@@ -1,20 +1,16 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ChainIcon from "@/components/icons/chain-icon";
 import BackButton from "@/components/back-button";
-import ArrowRightIcon from "@/components/icons/arrow-right-icon";
-import CheckIcon from "@/components/icons/check-icon";
-import ShieldIcon from "@/components/icons/shield-icon";
-import LightningIcon from "@/components/icons/lightning-icon";
-import StarIcon from "@/components/icons/star-icon";
+import { ArrowRight, Check, Shield, Zap, Star } from "lucide-react";
+import { motion } from "framer-motion";
 
 const DashboardCard = () => (
-  <div
+  <motion.div
     className="relative w-full h-64 bg-card rounded-3xl shadow-2xl p-6 transform hover:scale-105 transition-all duration-300 cursor-grab active:cursor-grabbing border border-border/20"
     style={{
       perspective: "1000px",
@@ -22,6 +18,8 @@ const DashboardCard = () => (
       boxShadow:
         "0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
     }}
+    whileHover={{ y: -5 }}
+    transition={{ type: "spring", stiffness: 300, damping: 30 }}
   >
     <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-card to-accent/10 rounded-3xl opacity-60"></div>
 
@@ -46,53 +44,61 @@ const DashboardCard = () => (
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-3 border border-border/50 hover:border-accent transition-colors">
+        <motion.div
+          className="bg-card/80 backdrop-blur-sm rounded-2xl p-3 border border-border/50 hover:border-accent transition-colors"
+          whileHover={{ scale: 1.05 }}
+        >
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Pendapatan
           </p>
           <p className="text-xl font-bold text-foreground mt-1">
             Rp 25.684.000
           </p>
-        </div>
-        <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-3 border border-border/50 hover:border-green-200 transition-colors">
+        </motion.div>
+        <motion.div
+          className="bg-card/80 backdrop-blur-sm rounded-2xl p-3 border border-border/50 hover:border-green-200 transition-colors"
+          whileHover={{ scale: 1.05 }}
+        >
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Pertumbuhan
           </p>
           <p className="text-xl font-bold text-green-600 mt-1">+12,5%</p>
-        </div>
+        </motion.div>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 const FeatureCard = ({
-  icon: Icon,
+  icon: IconComponent,
   title,
   description,
   rotation = 0,
 }: {
-  icon: React.ReactNode;
+  icon: React.ElementType;
   title: string;
   description: string;
   rotation?: number;
 }) => (
-  <div
+  <motion.div
     className="bg-card rounded-2xl p-5 border border-border shadow-sm hover:shadow-xl hover:border-accent transition-all duration-300 hover:scale-110 hover:-translate-y-1 cursor-pointer"
     style={{
       transform: `rotate(${rotation}deg)`,
       transformOrigin: "center",
     }}
+    whileHover={{ scale: 1.1, y: -4 }}
+    whileTap={{ scale: 0.95 }}
   >
     <div className="flex items-start gap-3">
       <div className="w-10 h-10 bg-gradient-to-br from-secondary/20 to-accent/20 rounded-lg flex items-center justify-center text-primary flex-shrink-0">
-        {Icon}
+        <IconComponent className="w-5 h-5" />
       </div>
       <div>
         <h3 className="font-semibold text-foreground text-sm">{title}</h3>
         <p className="text-xs text-muted-foreground mt-1">{description}</p>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 export default function VerifyPage() {
@@ -121,7 +127,12 @@ export default function VerifyPage() {
           <BackButton />
         </div>
 
-        <div className="max-w-md mx-auto w-full space-y-8 relative z-10">
+        <motion.div
+          className="max-w-md mx-auto w-full space-y-8 relative z-10"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-primary-foreground shadow-lg">
@@ -147,27 +158,52 @@ export default function VerifyPage() {
             {/* Form */}
             <form onSubmit={handleVerify} className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-foreground mb-3">
+                <label
+                  htmlFor="idHash"
+                  className="block text-sm font-semibold text-foreground mb-3"
+                >
                   Masukkan ID Hash Anda
                 </label>
-                <input
+                <motion.input
+                  id="idHash"
                   type="text"
                   value={idHash}
                   onChange={(e) => setIdHash(e.target.value)}
                   placeholder="Masukkan ID Hash Anda..."
                   className="w-full px-5 py-4 bg-background border-2 border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-200 font-medium shadow-sm"
+                  whileFocus={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button
+                <motion.button
                   type="submit"
                   disabled={!idHash.trim() || isLoading}
-                  className="flex-1 bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold py-4 rounded-xl hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md disabled:opacity-50"
+                  className="flex-1 bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold py-4 rounded-xl hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  {isLoading ? "Memverifikasi..." : "Verifikasi"}
-                  {!isLoading && <ArrowRightIcon />}
-                </button>
+                  {isLoading ? (
+                    <>
+                      <motion.div
+                        className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full"
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          duration: 1,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "linear",
+                        }}
+                      />
+                      Memverifikasi...
+                    </>
+                  ) : (
+                    <>
+                      Verifikasi
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </motion.button>
               </div>
             </form>
 
@@ -182,28 +218,53 @@ export default function VerifyPage() {
               <span className="text-muted">•</span>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Right Side - Hero Section with Blue Background */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-primary via-accent to-secondary flex-col justify-center items-center p-12 relative overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-        <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "1s" }}
-        ></div>
+        <motion.div
+          className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+          }}
+        ></motion.div>
+        <motion.div
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        ></motion.div>
 
         {/* Main Content */}
         <div className="relative z-10 space-y-12 max-w-lg w-full">
-          <div className="text-white space-y-4">
+          <motion.div
+            className="text-white space-y-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <h2 className="text-4xl font-bold leading-tight">
               Verifikasi Legalitas dan Aset UMKM
             </h2>
-            <p className="text-lg  leading-relaxed">
+            <p className="text-lg leading-relaxed">
               UMKMChain menyediakan platform transparan untuk memverifikasi izin
               usaha, kepemilikan, dan sertifikasi aset.
             </p>
-          </div>
+          </motion.div>
 
           <div className="relative h-96">
             {/* Main Dashboard Card */}
@@ -214,7 +275,7 @@ export default function VerifyPage() {
             {/* Feature Cards */}
             <div className="absolute -top-2 -left-16 z-20">
               <FeatureCard
-                icon={<ShieldIcon />}
+                icon={Shield}
                 title="Aman"
                 description="Verifikasi terenkripsi"
                 rotation={-8}
@@ -222,7 +283,7 @@ export default function VerifyPage() {
             </div>
             <div className="absolute -top-1 -right-16 z-20">
               <FeatureCard
-                icon={<LightningIcon />}
+                icon={Zap}
                 title="Cepat"
                 description="Proses instan"
                 rotation={8}
@@ -230,7 +291,7 @@ export default function VerifyPage() {
             </div>
             <div className="absolute -bottom-2 -left-12 z-20">
               <FeatureCard
-                icon={<StarIcon />}
+                icon={Star}
                 title="Terpercaya"
                 description="Sertifikat resmi"
                 rotation={6}
@@ -238,7 +299,7 @@ export default function VerifyPage() {
             </div>
             <div className="absolute -bottom-2 -right-12 z-20">
               <FeatureCard
-                icon={<CheckIcon />}
+                icon={Check}
                 title="Terverifikasi"
                 description="Status jelas"
                 rotation={-6}
@@ -248,20 +309,25 @@ export default function VerifyPage() {
 
           {/* Stats Section */}
           <div className="grid grid-cols-3 gap-4 pt-8">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <p className="text-3xl font-bold text-white">10K+</p>
-              <p className="text-sm text-white mt-1 font-medium">
-                Pengguna Aktif
-              </p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <p className="text-3xl font-bold text-white">99%</p>
-              <p className="text-sm text-white mt-1 font-medium">Waktu Aktif</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 hover:bg-white/15 transition-all duration-300">
-              <p className="text-3xl font-bold text-white">24/7</p>
-              <p className="text-sm text-white mt-1 font-medium">Dukungan</p>
-            </div>
+            {[
+              { value: "10K+", label: "Pengguna Aktif" },
+              { value: "99%", label: "Waktu Aktif" },
+              { value: "24/7", label: "Dukungan" },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 hover:bg-white/15 transition-all duration-300"
+                whileHover={{ scale: 1.05, y: -4 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <p className="text-3xl font-bold text-white">{stat.value}</p>
+                <p className="text-sm text-white mt-1 font-medium">
+                  {stat.label}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>

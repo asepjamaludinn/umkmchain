@@ -3,7 +3,19 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import ChainIcon from "@/components/icons/chain-icon";
-import CheckStrokeIcon from "@/components/icons/check-stroke-icon";
+import { motion } from "framer-motion";
+import {
+  CheckCircle,
+  Building2,
+  User,
+  Tag,
+  Calendar,
+  MapPin,
+  Hash,
+  Users,
+  Wallet,
+  Award,
+} from "lucide-react";
 
 export default function VerifyDataPage() {
   const searchParams = useSearchParams();
@@ -29,155 +41,209 @@ export default function VerifyDataPage() {
       businessType: "Kuliner",
       location: "Indonesia",
       employees: 50,
-      revenue: "$500K",
+      revenue: "Rp. 500.000",
       certifications: ["ISO 9001"],
     },
   };
 
   const data = mockData[idHash] || mockData["default"];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 100 },
+    },
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary/10 to-accent/10 p-4 sm:p-8">
       <div className="max-w-4xl mx-auto py-20">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <motion.div
+          className="flex items-center justify-between mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
+            <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center text-primary-foreground shadow-lg">
               <ChainIcon className="w-8 h-8" />
             </div>
-            <span className="text-2xl font-bold text-foreground">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               UMKMChain
-            </span>
+            </h1>
           </div>
-        </div>
+        </motion.div>
 
         {/* Main Card */}
-        <div className="bg-card rounded-2xl shadow-lg p-8 space-y-8">
+        <motion.div
+          className="bg-card rounded-2xl shadow-lg p-8 space-y-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {/* Status */}
-          <div className="flex items-center gap-4 pb-6 border-b border-border">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
-              <CheckStrokeIcon />
-            </div>
+          <motion.div
+            className="flex items-center gap-4 pb-6 border-b border-border"
+            variants={itemVariants}
+          >
+            <motion.div
+              className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+            >
+              <CheckCircle className="w-7 h-7" />
+            </motion.div>
             <div>
               <p className="text-sm text-muted-foreground">Status Verifikasi</p>
               <p className="text-2xl font-bold text-green-600">{data.status}</p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Business Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div>
-                <p className="text-sm text-muted-foreground font-medium">
-                  Nama Usaha
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {[
+              {
+                icon: Building2,
+                label: "Nama Usaha",
+                value: data.businessName,
+              },
+              { icon: User, label: "Pemilik", value: data.owner },
+              { icon: Tag, label: "Jenis Usaha", value: data.businessType },
+              {
+                icon: Calendar,
+                label: "Tanggal Registrasi",
+                value: data.registrationDate,
+              },
+              { icon: MapPin, label: "Lokasi", value: data.location },
+              { icon: Hash, label: "ID Hash", value: idHash, mono: true },
+            ].map((item, index) => (
+              <motion.div key={index} variants={itemVariants}>
+                <div className="flex items-center gap-2 mb-1 text-muted-foreground">
+                  <item.icon className="w-4 h-4" />
+                  <p className="text-sm font-medium">{item.label}</p>
+                </div>
+                <p
+                  className={`${
+                    item.mono ? "font-mono" : ""
+                  } text-lg font-semibold text-foreground`}
+                >
+                  {item.value}
                 </p>
-                <p className="text-xl font-bold text-foreground mt-1">
-                  {data.businessName}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground font-medium">
-                  Pemilik
-                </p>
-                <p className="text-lg font-semibold text-foreground mt-1">
-                  {data.owner}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground font-medium">
-                  Jenis Usaha
-                </p>
-                <p className="text-lg font-semibold text-foreground mt-1">
-                  {data.businessType}
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <p className="text-sm text-muted-foreground font-medium">
-                  Tanggal Registrasi
-                </p>
-                <p className="text-lg font-semibold text-foreground mt-1">
-                  {data.registrationDate}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground font-medium">
-                  Lokasi
-                </p>
-                <p className="text-lg font-semibold text-foreground mt-1">
-                  {data.location}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground font-medium">
-                  ID Hash
-                </p>
-                <p className="text-lg font-semibold text-foreground mt-1 font-mono">
-                  {idHash}
-                </p>
-              </div>
-            </div>
-          </div>
+              </motion.div>
+            ))}
+          </motion.div>
 
           {/* Additional Details */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-border">
-            <div className="bg-secondary/20 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground">Karyawan</p>
-              <p className="text-2xl font-bold text-primary mt-1">
-                {data.employees}
-              </p>
-            </div>
-            <div className="bg-green-50 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground">
-                Pendapatan Tahunan
-              </p>
-              <p className="text-2xl font-bold text-green-600 mt-1">
-                {data.revenue}
-              </p>
-            </div>
-            <div className="bg-accent/20 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground">Sertifikasi</p>
-              <p className="text-lg font-bold text-accent mt-1">
-                {data.certifications.length}
-              </p>
-            </div>
-          </div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-border"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {[
+              {
+                icon: Users,
+                label: "Karyawan",
+                value: data.employees,
+                bg: "bg-secondary/20",
+              },
+              {
+                icon: Wallet,
+                label: "Pendapatan Tahunan",
+                value: data.revenue,
+                bg: "bg-green-50",
+              },
+              {
+                icon: Award,
+                label: "Sertifikasi",
+                value: data.certifications.length,
+                bg: "bg-accent/20",
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                className={`${item.bg} rounded-lg p-4`}
+                variants={itemVariants}
+                whileHover={{ scale: 1.05, y: -4 }}
+              >
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <item.icon className="w-4 h-4" />
+                  <p className="text-sm">{item.label}</p>
+                </div>
+                <p className="text-2xl font-bold text-primary mt-1">
+                  {item.value}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
 
           {/* Certifications */}
-          <div className="pt-6 border-t border-border">
-            <p className="text-sm text-muted-foreground font-medium mb-3">
-              Sertifikasi
+          <motion.div
+            className="pt-6 border-t border-border"
+            variants={itemVariants}
+          >
+            <p className="text-sm text-muted-foreground font-medium mb-3 flex items-center gap-2">
+              <Award className="w-4 h-4" /> Sertifikasi
             </p>
             <div className="flex flex-wrap gap-2">
-              {data.certifications.map((cert: string) => (
-                <span
+              {data.certifications.map((cert: string, index: number) => (
+                <motion.span
                   key={cert}
                   className="bg-secondary/20 text-secondary-foreground px-3 py-1 rounded-full text-sm font-medium"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.1 }}
                 >
                   {cert}
-                </span>
+                </motion.span>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4 pt-6 border-t border-border">
-            <Link
-              href="/login"
-              className="flex-1 bg-primary text-primary-foreground font-semibold py-3 rounded-lg hover:bg-accent transition text-center"
-            >
-              Masuk ke Dashboard
-            </Link>
-            <Link
-              href="/verify"
-              className="flex-1 bg-muted text-muted-foreground font-semibold py-3 rounded-lg hover:bg-border transition text-center"
-            >
-              Verifikasi ID Lain
-            </Link>
-          </div>
-        </div>
+          <motion.div
+            className="flex gap-4 pt-6 border-t border-border"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div className="flex-1" variants={itemVariants}>
+              <Link
+                href="/login"
+                className="block w-full bg-primary text-primary-foreground font-semibold py-3 rounded-lg hover:bg-accent transition text-center"
+              >
+                Masuk ke Dashboard
+              </Link>
+            </motion.div>
+            <motion.div className="flex-1" variants={itemVariants}>
+              <Link
+                href="/verify"
+                className="block w-full bg-muted text-muted-foreground font-semibold py-3 rounded-lg hover:bg-border transition text-center"
+              >
+                Verifikasi ID Lain
+              </Link>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );

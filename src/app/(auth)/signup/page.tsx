@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import UMKMIcon from "@/components/icons/umkm-icon";
-import RegulatorIcon from "@/components/icons/regulator-icon";
+import { Store, FileText } from "lucide-react";
 import ChainIcon from "@/components/icons/chain-icon";
 
 export default function SignupChoicePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/10 to-background relative overflow-hidden">
+      {/* Background Gradient Elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-secondary/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-accent/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
@@ -39,10 +39,9 @@ export default function SignupChoicePage() {
               <div className="group h-full bg-card rounded-3xl border-2 border-border shadow-lg hover:shadow-2xl hover:border-accent transition-all duration-300 p-8 cursor-pointer">
                 <div className="space-y-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-secondary/20 to-accent/20 rounded-2xl flex items-center justify-center group-hover:from-secondary/30 group-hover:to-accent/30 transition-colors">
-                    <UMKMIcon className="w-8 h-8 text-primary" />
+                    <Store className="w-8 h-8 text-primary" />
                   </div>
 
-                  {/* Content */}
                   <div className="space-y-2">
                     <h3 className="text-2xl font-bold text-foreground">
                       Daftar UMKM
@@ -52,41 +51,28 @@ export default function SignupChoicePage() {
                     </p>
                   </div>
 
-                  {/* Features */}
                   <ul className="space-y-3">
-                    <li className="flex items-center gap-3 text-sm text-foreground">
-                      <svg
-                        className="w-5 h-5 text-primary flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
+                    {[
+                      "Proses pendaftaran mudah",
+                      "Verifikasi cepat dan aman",
+                      "Dukungan pelanggan 24/7",
+                    ].map((text, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center gap-3 text-sm text-foreground"
                       >
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                      </svg>
-                      Proses pendaftaran mudah
-                    </li>
-                    <li className="flex items-center gap-3 text-sm text-foreground">
-                      <svg
-                        className="w-5 h-5 text-primary flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                      </svg>
-                      Verifikasi cepat dan aman
-                    </li>
-                    <li className="flex items-center gap-3 text-sm text-foreground">
-                      <svg
-                        className="w-5 h-5 text-primary flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                      </svg>
-                      Dukungan pelanggan 24/7
-                    </li>
+                        <svg
+                          className="w-5 h-5 text-primary flex-shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                        </svg>
+                        {text}
+                      </li>
+                    ))}
                   </ul>
 
-                  {/* Button */}
                   <button className="w-full mt-6 bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 shadow-md group-hover:scale-105">
                     Daftar sebagai UMKM
                   </button>
@@ -99,10 +85,9 @@ export default function SignupChoicePage() {
               <div className="group h-full bg-card rounded-3xl border-2 border-border shadow-lg hover:shadow-2xl hover:border-accent transition-all duration-300 p-8 cursor-pointer">
                 <div className="space-y-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl flex items-center justify-center group-hover:from-accent/30 group-hover:to-primary/30 transition-colors">
-                    <RegulatorIcon className="w-8 h-8 text-primary" />
+                    <FileText className="w-8 h-8 text-primary" />
                   </div>
 
-                  {/* Content */}
                   <div className="space-y-2">
                     <h3 className="text-2xl font-bold text-foreground">
                       Daftar Regulator
@@ -112,41 +97,28 @@ export default function SignupChoicePage() {
                     </p>
                   </div>
 
-                  {/* Features */}
                   <ul className="space-y-3">
-                    <li className="flex items-center gap-3 text-sm text-foreground">
-                      <svg
-                        className="w-5 h-5 text-primary flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
+                    {[
+                      "Verifikasi terstruktur",
+                      "Dashboard manajemen lengkap",
+                      "Keamanan tingkat enterprise",
+                    ].map((text, i) => (
+                      <li
+                        key={i}
+                        className="flex items-center gap-3 text-sm text-foreground"
                       >
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                      </svg>
-                      Verifikasi terstruktur
-                    </li>
-                    <li className="flex items-center gap-3 text-sm text-foreground">
-                      <svg
-                        className="w-5 h-5 text-primary flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                      </svg>
-                      Dashboard manajemen lengkap
-                    </li>
-                    <li className="flex items-center gap-3 text-sm text-foreground">
-                      <svg
-                        className="w-5 h-5 text-primary flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                      </svg>
-                      Keamanan tingkat enterprise
-                    </li>
+                        <svg
+                          className="w-5 h-5 text-primary flex-shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                        </svg>
+                        {text}
+                      </li>
+                    ))}
                   </ul>
 
-                  {/* Button */}
                   <button className="w-full mt-6 bg-gradient-to-r from-accent to-primary text-primary-foreground font-semibold py-3 rounded-xl hover:shadow-lg transition-all duration-200 shadow-md group-hover:scale-105">
                     Daftar sebagai Regulator
                   </button>

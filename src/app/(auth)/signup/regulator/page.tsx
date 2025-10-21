@@ -40,7 +40,6 @@ export default function RegulatorSignupPage() {
     console.log("Data Pendaftaran Regulator:", data);
     // Simulasi submit
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    // Arahkan ke halaman selanjutnya
   };
 
   return (
@@ -71,7 +70,6 @@ export default function RegulatorSignupPage() {
               </p>
             </div>
 
-            {/* 5. Hubungkan form dengan handleSubmit */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Nama Instansi */}
               <div className="space-y-2">

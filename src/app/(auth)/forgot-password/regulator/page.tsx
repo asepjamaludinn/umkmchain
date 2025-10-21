@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import ChainIcon from "@/components/icons/chain-icon";
-import MailIcon from "@/components/icons/mail-icon";
-
+import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,16 +36,17 @@ export default function RegulatorForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-background relative">
+      {/* Background blur effect */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl opacity-10 pointer-events-none"></div>
 
-      <div className="flex justify-center px-6 pt-40">
+      <div className="flex justify-center px-6 pt-40 relative z-10">
         <div className="w-full max-w-md bg-card rounded-3xl border-2 border-border shadow-xl p-8 space-y-8">
           {isSubmitted ? (
             <div className="text-center space-y-4 py-8">
               <div className="mx-auto w-16 h-16 bg-gradient-to-br from-accent to-primary rounded-2xl flex items-center justify-center text-primary-foreground shadow-lg">
-                <MailIcon className="w-8 h-8" />
+                <Mail className="w-8 h-8" />
               </div>
               <h2 className="text-3xl font-bold text-foreground">
                 Periksa Email Anda

@@ -14,9 +14,13 @@ export default function NavbarWrapper({
 }: NavbarWrapperProps) {
   const pathname = usePathname();
 
-  const noNavbarPaths = ["/splash", "/verify"];
+  const noNavbarPaths = ["/splash", "/verify", "/dashboard", "/auth"];
 
-  if (noNavbarPaths.includes(pathname)) {
+  const shouldHideNavbar = noNavbarPaths.some((path) =>
+    pathname.startsWith(path)
+  );
+
+  if (shouldHideNavbar) {
     return null;
   }
 

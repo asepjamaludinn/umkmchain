@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import UMKMIcon from "@/components/icons/umkm-icon";
-import RegulatorIcon from "@/components/icons/regulator-icon";
+import { Store, FileText } from "lucide-react";
 import ChainIcon from "@/components/icons/chain-icon";
 
 export default function LoginChoicePage() {
@@ -40,7 +39,7 @@ export default function LoginChoicePage() {
               <div className="group h-full bg-white rounded-3xl border-2 border-gray-100 shadow-lg hover:shadow-2xl hover:border-accent transition-all duration-300 p-8 cursor-pointer">
                 <div className="space-y-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-brand-light/20 to-brand-medium/20 rounded-2xl flex items-center justify-center group-hover:from-brand-light/30 group-hover:to-brand-medium/30 transition-colors">
-                    <UMKMIcon className="w-8 h-8 text-brand-dark" />
+                    <Store className="w-8 h-8 text-brand-dark" />
                   </div>
 
                   {/* Content */}
@@ -99,7 +98,7 @@ export default function LoginChoicePage() {
               <div className="group h-full bg-white rounded-3xl border-2 border-gray-100 shadow-lg hover:shadow-2xl hover:border-brand-medium transition-all duration-300 p-8 cursor-pointer">
                 <div className="space-y-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-brand-medium/20 to-brand-dark/20 rounded-2xl flex items-center justify-center group-hover:from-brand-medium/30 group-hover:to-brand-dark/30 transition-colors">
-                    <RegulatorIcon className="w-8 h-8 text-brand-dark" />
+                    <FileText className="w-8 h-8 text-brand-dark" />
                   </div>
 
                   {/* Content */}
